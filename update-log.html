@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vidlo Update Log</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface-variant": "#c4c6d0",
+                        "tertiary-fixed-dim": "#bac6e4",
+                        "inverse-on-surface": "#2e3132",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary": "#d8e3ff",
+                        "on-secondary-fixed-variant": "#28467c",
+                        "on-primary-container": "#385283",
+                        "on-primary-fixed": "#001a40",
+                        "tertiary-container": "#bbc7e5",
+                        "secondary": "#adc6ff",
+                        "surface-container-lowest": "#0c0f10",
+                        "surface-container": "#1d2021",
+                        "surface-container-low": "#191c1d",
+                        "primary-fixed-dim": "#adc7ff",
+                        "on-secondary-container": "#9cb8f6",
+                        "on-background": "#e1e3e4",
+                        "surface-variant": "#323536",
+                        "on-tertiary-fixed-variant": "#3b475f",
+                        "on-primary-fixed-variant": "#2b4676",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#44474f",
+                        "inverse-primary": "#445e8f",
+                        "surface-bright": "#373a3b",
+                        "surface-container-high": "#272a2b",
+                        "on-secondary-fixed": "#001a42",
+                        "on-tertiary": "#243048",
+                        "on-tertiary-container": "#47536c",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-tertiary-fixed": "#0f1b32",
+                        "on-primary": "#112f5e",
+                        "on-surface": "#e1e3e4",
+                        "secondary-container": "#2a487e",
+                        "background": "#111415",
+                        "surface": "#111415",
+                        "surface-tint": "#adc7ff",
+                        "error-container": "#93000a",
+                        "primary-container": "#adc7ff",
+                        "surface-container-highest": "#323536",
+                        "outline": "#8e909a",
+                        "primary": "#d8e3ff",
+                        "on-error": "#690005",
+                        "primary-fixed": "#d7e2ff",
+                        "inverse-surface": "#e1e3e4",
+                        "on-secondary": "#0a2f64",
+                        "tertiary-fixed": "#d7e2ff",
+                        "surface-dim": "#111415",
+                        "error": "#ffb4ab"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "xl": "64px",
+                        "xs": "4px",
+                        "margin-desktop": "60px",
+                        "sm": "12px",
+                        "base": "8px",
+                        "gutter": "16px",
+                        "lg": "40px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "display-lg-mobile": ["Montserrat"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Montserrat"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "headline-md": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #111415;
+            color: #e1e3e4;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-accent {
+            box-shadow: 0 0 15px rgba(173, 199, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-xl flex flex-col">
+<button onclick="window.history.back()" aria-label="Back" title="Back" class="text-indigo-500 p-2 rounded-full fixed left-4 top-4 z-50 bg-transparent">
+  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<!-- TopAppBar -->
+<!-- Main Content Canvas -->
+<main class="flex-grow px-margin-mobile md:px-margin-desktop md:max-w-4xl md:mx-auto w-full py-md">
+<div class="flex flex-col gap-md">
+<!-- Update Item: Series -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="tv">tv</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Series Added</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">We've expanded our library. Discover new multi-season adventures ready to binge.</p>
+</div>
+</div>
+<!-- Update Item: Guest Login -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="login">login</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Guest Login</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">No account needed to start watching. Jump right into the action instantly.</p>
+</div>
+</div>
+<!-- Update Item: Anime Collection -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02] border-primary/30 shadow-[0_0_15px_rgba(173,199,255,0.15)]">
+<div class="bg-primary/20 rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="auto_awesome" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-primary">Anime Collection</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Explore our new dedicated anime section. High fidelity streams, subs, and dubs now available.</p>
+</div>
+</div>
+<!-- Update Item: Update Log -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="history">history</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Update Log</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Track every new feature, fix, and addition right here. Stay in the loop.</p>
+</div>
+</div>
+<!-- Update Item: Status Page -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="signal_cellular_alt">signal_cellular_alt</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Status Page</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time system health monitoring. Check server status and stream stability instantly.</p>
+</div>
+</div>
+<!-- Update Item: Ad Removal -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="block">block</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">Ad Removal</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Improved zero-ad experience for premium tiers. Uninterrupted cinematic immersion.</p>
+</div>
+</div>
+<!-- Update Item: New Sidebar -->
+<div class="glass-card rounded-lg p-md flex items-start gap-sm hover:glow-accent transition-all duration-300 transform hover:scale-[1.02]">
+<div class="bg-surface-container rounded-full p-sm flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="menu_open">menu_open</span>
+</div>
+<div class="flex flex-col gap-xs">
+<h2 class="font-headline-sm text-headline-sm text-primary">New Sidebar</h2><span class="font-label-sm text-label-sm text-on-surface-variant block mt-1">June 2, 2026</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Streamlined navigation experience. Access your favorite sections faster and easier.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<!-- Footer -->
+
+<script>
+  (function(){
+    const DICT = {
+      en: {
+        title: 'Vidlo Update Log',
+        pageTitle: 'Update Log',
+        lastUpdated: 'June 2, 2026',
+        items: [
+          'Redesigned Interface',
+          'Series Added',
+          'Guest Login',
+          'Anime Collection',
+          'Update Log',
+          'Status Page',
+          'Ad Removal',
+          'New Sidebar'
+        ],
+        itemDescs: [
+          "We redesigned the entire interface for a cleaner, faster, and more intuitive experience.",
+          "We've expanded our library. Discover new multi-season adventures ready to binge.",
+          'No account needed to start watching. Jump right into the action instantly.',
+          'Explore our new dedicated anime section. High fidelity streams, subs, and dubs now available.',
+          'Track every new feature, fix, and addition right here. Stay in the loop.',
+          'Real-time system health monitoring. Check server status and stream stability instantly.',
+          'Improved zero-ad experience for premium tiers. Uninterrupted cinematic immersion.',
+          'Streamlined navigation experience. Access your favorite sections faster and easier.'
+        ]
+      },
+      es: {
+        title: 'Registro de Actualizaciones - Vidlo',
+        pageTitle: 'Registro de Actualizaciones',
+        lastUpdated: '2 de junio de 2026',
+        items: [
+          'Interfaz rediseñada',
+          'Series Añadidas',
+          'Acceso como Invitado',
+          'Colección de Anime',
+          'Registro de Actualizaciones',
+          'Página de Estado',
+          'Eliminación de anuncios',
+          'Nueva barra lateral'
+        ],
+        itemDescs: [
+          'Hemos rediseñado toda la interfaz para una experiencia más limpia, rápida e intuitiva.',
+          'Hemos ampliado nuestra biblioteca. Descubre nuevas aventuras de varias temporadas listas para maratonear.',
+          'No se necesita cuenta para empezar a ver. Salta directamente a la acción al instante.',
+          'Explora nuestra nueva sección dedicada al anime. Transmisiones de alta fidelidad, subtítulos y doblajes disponibles.',
+          'Sigue cada nueva característica, corrección y adición aquí. Mantente informado.',
+          'Monitoreo de estado del sistema en tiempo real. Consulta el estado del servidor y la estabilidad de transmisión al instante.',
+          'Mejorada experiencia sin anuncios para niveles premium. Inmersión cinematográfica sin interrupciones.',
+          'Navegación optimizada. Accede a tus secciones favoritas más rápido y con mayor facilidad.'
+        ]
+      }
+    };
+
+    function apply(lang){
+      const map = DICT[lang] || DICT.en;
+      try {
+        document.title = map.title || document.title;
+      } catch(e){}
+
+      // Main header and timestamp
+      const mainH1 = document.querySelector('main .mb-stack-lg h1');
+      const mainP = document.querySelector('main .mb-stack-lg p');
+      if(mainH1) mainH1.textContent = map.pageTitle;
+      if(mainP) mainP.textContent = map.lastUpdated;
+
+      // Update item titles: target .glass-card h2 in document order
+      const itemEls = Array.from(document.querySelectorAll('.glass-card h2'));
+      const descEls = Array.from(document.querySelectorAll('.glass-card p'));
+
+      map.items.forEach((txt, i) => {
+        if(itemEls[i]) itemEls[i].textContent = txt;
+      });
+
+      // descriptions (attempt to align by index)
+      map.itemDescs.forEach((txt, i) => {
+        if(descEls[i]) descEls[i].textContent = txt;
+      });
+    }
+
+    // Expose function for same-tab toggles
+    window.applyUpdateLogLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){}
+    };
+
+    // Initialize on load from stored language
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      apply(stored);
+    });
+
+    // Listen for storage events to update across tabs
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+</body></html>

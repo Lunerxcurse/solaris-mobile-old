@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vidlo - Unlimited Movies</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#c8c6c5",
+                        "surface-variant": "#353534",
+                        "surface-tint": "#adc6ff",
+                        "surface": "#131313",
+                        "on-secondary-fixed-variant": "#474746",
+                        "on-tertiary-container": "#4c1a00",
+                        "surface-container-highest": "#353534",
+                        "inverse-primary": "#005bc1",
+                        "tertiary-container": "#ef6719",
+                        "surface-dim": "#131313",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-container": "#b7b5b4",
+                        "on-error": "#690005",
+                        "on-surface-variant": "#c1c6d7",
+                        "surface-container": "#201f1f",
+                        "primary": "#adc6ff",
+                        "secondary-container": "#474746",
+                        "tertiary-fixed": "#ffdbcc",
+                        "primary-container": "#4b8eff",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface-bright": "#3a3939",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-low": "#1c1b1b",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#7c2e00",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#001a41",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-primary-container": "#00285c",
+                        "on-primary": "#002e69",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffb595",
+                        "primary-fixed": "#d8e2ff",
+                        "tertiary-fixed-dim": "#ffb595",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "on-tertiary": "#571e00",
+                        "inverse-on-surface": "#313030",
+                        "background": "#131313",
+                        "on-secondary": "#313030",
+                        "outline": "#8b90a0",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-surface": "#e5e2e1",
+                        "outline-variant": "#414755"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "xl": "80px",
+                        "lg": "48px",
+                        "sm": "12px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Be Vietnam Pro"],
+                        "display-hero": ["Be Vietnam Pro"],
+                        "display-hero-mobile": ["Be Vietnam Pro"],
+                        "label-caps": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-hero": ["72px", { "lineHeight": "80px", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "display-hero-mobile": ["40px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(5,5,5,0.2) 0%, rgba(5,5,5,0.8) 60%, rgba(5,5,5,1) 100%);
+        }
+        
+        .blue-glow:hover {
+            box-shadow: 0 0 20px rgba(75, 142, 255, 0.4);
+        }
+
+        /* Make HBO Max logo pop: convert to high-contrast white, boost brightness and size significantly */
+        .brand-img.hbo {
+            filter: invert(1) brightness(2) contrast(1.1);
+            -webkit-filter: invert(1) brightness(2) contrast(1.1);
+            transition: filter 200ms ease, transform 160ms ease;
+            transform: scale(1.18);
+            -webkit-transform: scale(1.18);
+            max-height: 180px;
+            width: auto;
+        }
+
+        /* Brighter Disney+ logo (bigger) */
+        .brand-img.disney {
+            /* boost brightness, contrast and saturation for stronger pop; larger for emphasis */
+            filter: brightness(2) contrast(1.12) saturate(1.2);
+            -webkit-filter: brightness(2) contrast(1.12) saturate(1.2);
+            transition: filter 160ms ease, transform 120ms ease;
+            transform: scale(1.40);
+            -webkit-transform: scale(1.40);
+            max-height: 220px;
+        }
+
+        /* Restore Peacock color but keep it bright and slightly larger */
+        .brand-img.peacock {
+            /* keep the original artwork colors, boost brightness/contrast to make it pop */
+            filter: brightness(1.35) contrast(1.05) saturate(1.12);
+            -webkit-filter: brightness(1.35) contrast(1.05) saturate(1.12);
+            transition: filter 160ms ease, transform 120ms ease;
+            transform: scale(1.12);
+            -webkit-transform: scale(1.12);
+            max-height: 140px;
+        }
+
+        /* Make Hulu logo bigger and slightly brighter for emphasis */
+        .brand-img.hulu {
+            filter: brightness(1.4) saturate(1.05);
+            -webkit-filter: brightness(1.4) saturate(1.05);
+            transition: filter 160ms ease, transform 120ms ease;
+            transform: scale(1.18);
+            -webkit-transform: scale(1.18);
+            max-height: 160px;
+        }
+
+        /* Make Amazon Prime Video logo larger and more prominent */
+        .brand-img.prime {
+            filter: brightness(1.35) saturate(1.05);
+            -webkit-filter: brightness(1.35) saturate(1.05);
+            transition: filter 160ms ease, transform 120ms ease;
+            transform: scale(1.35);
+            -webkit-transform: scale(1.35);
+            max-height: 260px;
+            width: auto;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-x-hidden min-h-screen flex flex-col font-body-md text-body-md">
+<!-- TopAppBar JSON Component -->
+<main class="flex-grow flex flex-col">
+  
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex flex-col justify-end pt-xl pb-xl px-margin-mobile">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center bg-no-repeat" data-alt="A dark, moody cinematic movie collage featuring dramatic lighting, silhouettes, and deep contrast. The scene evokes a premium theater experience with rich obsidian blacks, subtle teal and orange color grading, and an atmosphere of high-end entertainment. The composition is epic and immersive, perfect for a high-impact digital background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXE4LtpBIbcVd4nxwbC8CkMpdDz0DLz8SRpO-o-kaGg4-LApxlhnwaSQ2EeQQZhbk65r9-OYTF7YMzxoUU514SSi9j_40fNZy4e9K-yga3vMbpco8OS_3NcszsgLzGaTmG404xX0JavtvG6hZ4KVcTeVR-cJzumJtpXMCiLFG2RxQrgCG8s2mjP_WmzibBX_htCjnqbn1IQtMYmn43ODe1ceWZaEc5UE7s26UDwBcKr-IQjrTC-IAzKw1AO9tTMRhE4v4');">
+</div>
+<div class="absolute inset-0 hero-gradient z-10"></div>
+</div>
+<!-- Content -->
+<div class="relative z-20 flex flex-col gap-md max-w-2xl mx-auto text-center mt-auto">
+<h1 class="font-display-hero-mobile text-display-hero-mobile text-on-surface drop-shadow-lg">
+                    Unlimited Movies. Completely Free.
+                </h1>
+<p class="font-body-lg text-body-lg text-secondary drop-shadow-md">
+                    No ads. No subscriptions. Just movies.
+                </p>
+<a href="/index.html?showSignup=1" id="get-started" class="mt-base bg-primary-container text-on-primary-container font-headline-md text-headline-md py-sm px-lg rounded-full blue-glow transition-all duration-300 scale-95 active:scale-90 flex items-center justify-center gap-sm mx-auto self-center">
+  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+  Get Started
+</a>
+</div>
+</section>
+<!-- Partners Section -->
+<section class="py-xl px-margin-mobile flex flex-col gap-lg items-center relative z-20 bg-surface">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant tracking-widest text-center uppercase">
+                Movies from your favorite brands
+            </h2>
+<div class="flex flex-wrap justify-center gap-gutter opacity-90 hover:opacity-100 transition-all duration-300">
+  <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-lg items-center justify-items-center w-full max-w-5xl mx-auto">
+    <div class="h-28 flex items-center justify-center">
+      <img src="/disney-logo-disney-icon-transparent-free-png.png" alt="Disney+" class="h-28 object-contain brand-img disney"/>
+    </div>
+    <div class="h-28 flex items-center justify-center">
+      <img src="/HBO_Max-Logo.wine.svg" alt="HBO Max" class="brand-img hbo object-contain" style="display:block"/>
+    </div>
+    <div class="h-28 flex items-center justify-center">
+      <img src="/Hulu-Logo.wine.svg" alt="Hulu" class="h-28 object-contain brand-img hulu"/>
+    </div>
+    <div class="h-36 flex items-center justify-center">
+      <img src="/amazon-prime-video-logo-1160935492577exbdaecs-removebg-preview.png" alt="Amazon Prime Video" class="h-36 object-contain brand-img prime"/>
+    </div>
+    <div class="h-14 flex items-center justify-center">
+      <img src="/215-2154144_transparent-background-netflix-logo__1_-removebg-preview.png" alt="Netflix" class="h-14 object-contain"/>
+    </div>
+    <div class="h-28 flex items-center justify-center">
+      <img src="/nbc-peacock-removebg-preview.png" alt="Peacock" class="h-28 object-contain brand-img peacock"/>
+    </div>
+    <div class="h-14 flex items-center justify-center">
+      <img src="/Paramount+_logo.png" alt="Paramount+" class="h-14 object-contain"/>
+    </div>
+  </div>
+</div>
+</section>
+<!-- Value Props Section -->
+<section class="py-xl px-margin-mobile flex flex-col gap-gutter bg-surface-container-low relative z-20">
+<div class="glass-panel p-md rounded-xl flex flex-col items-center text-center gap-sm transition-transform duration-300 hover:scale-[1.02]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center border border-white/5 mb-xs">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="block" style="font-variation-settings: 'FILL' 0;">block</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Zero Ads</h3>
+<p class="font-body-md text-body-md text-secondary">Enjoy uninterrupted cinema.</p>
+</div>
+<div class="glass-panel p-md rounded-xl flex flex-col items-center text-center gap-sm transition-transform duration-300 hover:scale-[1.02]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center border border-white/5 mb-xs">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="movie" style="font-variation-settings: 'FILL' 0;">movie</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">All Major Studios</h3>
+<p class="font-body-md text-body-md text-secondary">The content you love, all in one place.</p>
+</div>
+<div class="mt-lg flex flex-col gap-md">
+<h2 class="font-headline-md text-headline-md text-on-surface text-center">Other Streaming Services</h2>
+<div class="glass-panel rounded-xl overflow-hidden">
+<div class="grid grid-cols-3 border-b border-white/10 bg-surface-container p-md">
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase">Feature</div>
+<div class="font-label-caps text-label-caps text-primary text-center uppercase">Vidlo</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant text-center uppercase">Others</div>
+</div>
+<div class="flex flex-col">
+<!-- Monthly Cost -->
+<div class="grid grid-cols-3 items-center p-md border-b border-white/5">
+<div class="font-body-md text-on-surface">Monthly Cost</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">$0</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">$15+</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div>
+<!-- Ad Experience -->
+<div class="grid grid-cols-3 items-center p-md border-b border-white/5">
+<div class="font-body-md text-on-surface">Ad Experience</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">Zero</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">Frequent</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div>
+<!-- Content Library -->
+<div class="grid grid-cols-3 items-center p-md border-b border-white/5">
+<div class="font-body-md text-on-surface">Content</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">Major</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">Limited</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div>
+<!-- Subscription -->
+<div class="grid grid-cols-3 items-center p-md border-b border-white/5">
+<div class="font-body-md text-on-surface">Sign-up</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">No</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">Required</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div>
+<!-- 4K Streaming -->
+<div class="grid grid-cols-3 items-center p-md border-b border-white/5">
+<div class="font-body-md text-on-surface">4K Streaming</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">Yes</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">Add-on</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div>
+<!-- Offline Downloads -->
+<!-- New Releases -->
+<div class="grid grid-cols-3 items-center p-md">
+<div class="font-body-md text-on-surface">New Releases</div>
+<div class="flex items-center justify-center gap-xs text-primary">
+<span class="font-bold">Instant</span>
+<span class="material-symbols-outlined text-body-md">check_circle</span>
+</div>
+<div class="flex items-center justify-center gap-xs text-secondary opacity-60">
+<span class="">Delayed</span>
+<span class="material-symbols-outlined text-body-md">cancel</span>
+</div>
+</div></div>
+</div>
+</div></section>
+</main>
+<!-- Footer JSON Component -->
+
+<script>
+  (function(){
+    // Simple localized strings for the Welcome page (English/Spanish)
+    const DICT = {
+      en: {
+        hero_title: 'Unlimited Movies. Completely Free.',
+        hero_sub: 'No ads. No subscriptions. Just movies.',
+        get_started: 'Get Started',
+        partners_heading: 'Movies from your favorite brands'
+      },
+      es: {
+        hero_title: 'Películas ilimitadas. Completamente gratis.',
+        hero_sub: 'Sin anuncios. Sin suscripciones. Solo películas.',
+        get_started: 'Comenzar',
+        partners_heading: 'Películas de tus marcas favoritas'
+      }
+    };
+
+    function setWelcomeLanguage(lang){
+      const map = DICT[lang] || DICT.en;
+      try{ document.title = map.hero_title + ' — Vidlo'; }catch(e){}
+      try{
+        const h1 = document.querySelector('section.relative h1') || document.querySelector('section.relative .font-display-hero-mobile');
+        if(h1) h1.textContent = map.hero_title;
+      }catch(e){}
+      try{
+        const p = document.querySelector('section.relative p') || document.querySelector('section.relative .font-body-lg');
+        if(p) p.textContent = map.hero_sub;
+      }catch(e){}
+      try{
+        const btn = document.getElementById('get-started');
+        if(btn) btn.textContent = map.get_started;
+      }catch(e){}
+      try{
+        const partners = document.querySelector('section.py-xl h2') || document.querySelector('section.py-xl .font-label-caps');
+        if(partners) partners.textContent = map.partners_heading;
+      }catch(e){}
+    }
+
+    // Initialize from stored language and react to global settings changes.
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      setWelcomeLanguage(stored);
+    });
+
+    // When the global language setting changes (via Settings), update this page.
+    window.addEventListener('storage', function(ev){
+      if(ev.key === 'app_language'){
+        const lang = ev.newValue || 'en';
+        setWelcomeLanguage(lang);
+      }
+    });
+
+    // Also expose a helper in case other code wants to programmatically refresh the welcome copy.
+    window.applyWelcomeLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        setWelcomeLanguage(lang);
+      }catch(e){}
+    };
+  })();
+</script>
+
+</body></html>

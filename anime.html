@@ -1,0 +1,327 @@
+<!doctype html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Anime — Vidlo</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    body { background:#0A0A0A; color:#e5e2e1; font-family: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; min-height:100dvh }
+    /* layout: flow tiles but keep homepage poster proportions and behavior */
+    /* responsive grid: posters will wrap into rows (auto-fill columns based on viewport) */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      padding: 16px;
+      align-items: start;
+      justify-items: center;
+    }
+
+    /* homepage-like poster card (adapted for grid cells) */
+    .poster-card {
+      position: relative;
+      width: 100%;
+      max-width: 160px;
+      aspect-ratio: 2 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0F0F10;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease;
+      display: block;
+    }
+    .poster-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:0 18px 44px rgba(0,0,0,0.6); }
+    .poster-card .poster-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease; }
+    .poster-card .poster-card-title {
+      position:absolute;
+      left:8px;
+      right:8px;
+      bottom:8px;
+      color:#fff;
+      font-size:13px;
+      font-weight:600;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      overflow:hidden;
+      text-shadow:0 4px 16px rgba(0,0,0,0.6);
+    }
+    .poster-card .poster-overlay {
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.0));
+      opacity:0;
+      transition:opacity .22s ease;
+      pointer-events:none;
+    }
+    .poster-card:hover .poster-overlay { opacity:1; }
+    header{ position:sticky; top:0; z-index:40; background:linear-gradient(180deg, rgba(10,10,10,.95), rgba(10,10,10,.9)); backdrop-blur:8px; border-bottom:1px solid rgba(255,255,255,0.03); }
+    /* add left padding so header content clears the fixed back button */
+    .bar{ display:flex; align-items:center; gap:12px; padding:12px 16px 12px 72px; max-width:980px; margin:0 auto; }
+    .title{ font-size:18px; font-weight:700; }
+    .back{ color:#60a5fa; padding:8px; border-radius:8px; display:inline-flex; align-items:center; gap:6px; }
+    .search {
+      flex: 1;
+      background: #121212;
+      border: 1px solid rgba(255,255,255,0.12); /* stronger edge */
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: #e5e2e1;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6); /* subtle depth so edges read clearly */
+      transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+    }
+    .search:focus {
+      outline: none;
+      border-color: rgba(99,102,241,0.9);
+      box-shadow: 0 8px 30px rgba(99,102,241,0.08); /* visible but soft focus ring */
+      transform: translateY(-1px);
+    }
+    .empty { text-align:center; color:#9ca3af; padding:48px 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <button onclick="window.history.back()" aria-label="Back" title="Back" class="text-indigo-500 p-2 rounded-full fixed left-4 top-4 z-50 bg-transparent">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+      </button>
+      <div class="title">Anime</div>
+      <input id="q" class="search" placeholder="Search anime..." />
+    </div>
+  </header>
+
+  <main id="main" style="max-width:980px;margin:16px auto;">
+    <div id="results" class="grid" aria-live="polite"></div>
+    <div id="empty" class="empty" hidden>No results yet — try searching for "One Piece", "Naruto", or "Attack on Titan".</div>
+  </main>
+
+  <script>
+    // Infinite-scroll TMDB anime feed (randomized batches)
+    const TMDB_KEY = 'b15142dfa85e41840fcd4ab30d82488f';
+    const poster = p => p ? `https://image.tmdb.org/t/p/w500${p}` : '/no-image.png';
+
+    function qs(id){ return document.getElementById(id); }
+    async function tmdbSearchMulti(q, page = 1){
+      try{
+        const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}&page=${page}`;
+        const res = await fetch(url);
+        return await res.json();
+      }catch(e){ console.warn(e); return null; }
+    }
+
+    function makeCard(item){
+      const link = document.createElement('a');
+      link.href = `/?tmdb=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.media_type || 'movie')}`;
+      link.className = 'poster-card';
+      link.setAttribute('role','button');
+      const img = document.createElement('img');
+      img.className = 'poster-img';
+      img.alt = item.title || item.name || 'Anime';
+      img.src = poster(item.poster_path || item.backdrop_path);
+      const overlay = document.createElement('div');
+      overlay.className = 'poster-overlay';
+      const title = document.createElement('div');
+      title.className = 'poster-card-title';
+      title.textContent = (item.title || item.name || 'Untitled').slice(0,60);
+      link.appendChild(img);
+      link.appendChild(overlay);
+      link.appendChild(title);
+      return link;
+    }
+
+    // curated list of anime-ish queries to randomize from
+    const RANDOM_QUERIES = [
+      'Naruto','One Piece','Attack on Titan','Demon Slayer','My Hero Academia','Fullmetal Alchemist',
+      'Bleach','Cowboy Bebop','Spirited Away','Studio Ghibli','JoJo','Hunter x Hunter',
+      'Mob Psycho 100','Death Note','Sword Art Online','Black Clover','Fairy Tail',
+      'Tokyo Ghoul','Dr. Stone','Haikyuu!!','Re:Zero','Violet Evergarden','Akira','Psycho-Pass'
+    ];
+
+    const results = qs('results');
+    const empty = qs('empty');
+    const input = qs('q');
+
+    // state for infinite loading
+    let loading = false;
+    let batchCount = 0;
+
+    // pick a random query and page; return TMDB results filtered for posters
+    async function fetchRandomBatch(){
+      const q = RANDOM_QUERIES[Math.floor(Math.random() * RANDOM_QUERIES.length)];
+      const page = 1 + Math.floor(Math.random() * 3); // pick page 1..3 for variety
+      const json = await tmdbSearchMulti(q, page);
+      if(!json || !json.results) return [];
+      return json.results.filter(r => (r.media_type === 'tv' || r.media_type === 'movie') && (r.poster_path || r.backdrop_path));
+    }
+
+    // append up to `limit` cards from a result array
+    function appendResults(arr, limit = 12){
+      let added = 0;
+      for(const it of arr){
+        if(added >= limit) break;
+        // avoid duplicates by poster src
+        const src = poster(it.poster_path || it.backdrop_path);
+        if(Array.from(results.querySelectorAll('img.poster-img')).some(img=>img.src === src)) continue;
+        const card = makeCard(it);
+        results.appendChild(card);
+        added++;
+      }
+      return added;
+    }
+
+    // load more batches aggressively to ensure many off-screen cards are generated each call
+    async function loadMore(){
+      if(loading) return;
+      loading = true;
+      empty.hidden = true;
+      let totalAdded = 0;
+
+      // try up to 4 batches per invocation to ensure plenty of off-screen content
+      for(let i=0;i<4;i++){
+        try{
+          const batch = await fetchRandomBatch();
+          // append up to 24 cards per batch for dense prefill
+          totalAdded += appendResults(batch, 24);
+        }catch(e){
+          console.warn('Batch fetch failed', e);
+        }
+        // small pause to avoid overwhelming TMDB
+        await new Promise(r => setTimeout(r, 120));
+      }
+
+      // If we still have very little content relative to viewport, schedule another background prefetch
+      try{
+        const height = document.body.offsetHeight;
+        const vh = window.innerHeight;
+        if(height < vh * 3){
+          // fire-and-forget extra prefetch so users always have offscreen content
+          setTimeout(() => { if(!loading) loadMore(); }, 120);
+        }
+      }catch(e){}
+
+      // fallback: if still empty after attempts, show empty message
+      if(results.children.length === 0){
+        empty.textContent = 'No results yet — try searching for "One Piece", "Naruto", or "Attack on Titan".';
+        empty.hidden = false;
+      }
+      loading = false;
+      batchCount++;
+    }
+
+    // initial warm load: prefill multiple batches so feed already extends well off-screen
+    (async function initFeed(){
+      results.innerHTML = '';
+      // queue several back-to-back loads to create a deep initial buffer
+      await loadMore();
+      await loadMore();
+      // schedule a couple of background fills to ensure the page is long enough
+      setTimeout(()=> loadMore(), 300);
+      setTimeout(()=> loadMore(), 800);
+    })();
+
+    // search input still works and clears feed
+    let searchTimeout;
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const q = input.value.trim();
+        if(!q){
+          // restore feed view (do nothing; user can scroll to load more)
+          return;
+        }
+        // perform an explicit search and replace grid with its results
+        (async function doSearch(){
+          results.innerHTML = '';
+          const json = await tmdbSearchMulti(q, 1);
+          if(!json || !json.results || json.results.length === 0){
+            empty.textContent = 'No results found.';
+            empty.hidden = false;
+            return;
+          }
+          const filtered = json.results.filter(r => (r.media_type === 'tv' || r.media_type === 'movie') && (r.poster_path || r.backdrop_path));
+          if(filtered.length === 0){
+            empty.textContent = 'No poster artwork available for results.';
+            empty.hidden = false;
+            return;
+          }
+          filtered.slice(0,40).forEach(it => results.appendChild(makeCard(it)));
+        })();
+      }, 350);
+    });
+
+    // infinite scroll: when near bottom load more
+    let scrollDebounce;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollDebounce);
+      scrollDebounce = setTimeout(() => {
+        const nearBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 800);
+        if(nearBottom) loadMore();
+      }, 150);
+    });
+
+    // also load more on resize if content short
+    window.addEventListener('resize', () => {
+      if(document.body.offsetHeight < window.innerHeight * 1.2) loadMore();
+    });
+  </script>
+
+  <script>
+    (function(){
+      const DICT = {
+        en: {
+          title: 'Anime — Vidlo',
+          headerTitle: 'Anime',
+          searchPlaceholder: 'Search anime...',
+          emptyText: 'No results yet — try searching for "One Piece", "Naruto", or "Attack on Titan".'
+        },
+        es: {
+          title: 'Anime — Vidlo',
+          headerTitle: 'Anime',
+          searchPlaceholder: 'Buscar anime...',
+          emptyText: 'Sin resultados — prueba buscando "One Piece", "Naruto" o "Attack on Titan".'
+        }
+      };
+
+      function apply(lang){
+        const map = DICT[lang] || DICT.en;
+        try{ document.title = map.title; }catch(e){}
+        try{
+          const header = document.querySelector('.title');
+          if(header) header.textContent = map.headerTitle;
+        }catch(e){}
+        try{
+          const inp = document.getElementById('q');
+          if(inp) inp.placeholder = map.searchPlaceholder;
+        }catch(e){}
+        try{
+          const empty = document.getElementById('empty');
+          if(empty) empty.textContent = map.emptyText;
+        }catch(e){}
+      }
+
+      window.applyAnimeLanguage = function(lang){
+        try{
+          if(!lang) lang = localStorage.getItem('app_language') || 'en';
+          localStorage.setItem('app_language', lang);
+          apply(lang);
+        }catch(e){}
+      };
+
+      document.addEventListener('DOMContentLoaded', function(){
+        const stored = localStorage.getItem('app_language') || 'en';
+        apply(stored);
+      });
+
+      window.addEventListener('storage', function(e){
+        if(e.key === 'app_language'){
+          const newLang = e.newValue || 'en';
+          apply(newLang);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

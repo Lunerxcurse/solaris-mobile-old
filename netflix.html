@@ -1,0 +1,323 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Cinematic Mobile View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e2e2e2",
+                        "outline": "#af8782",
+                        "surface": "#131313",
+                        "primary-fixed": "#ffdad5",
+                        "surface-container-lowest": "#0e0e0e",
+                        "secondary-container": "#454747",
+                        "on-secondary-container": "#b4b5b5",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-container": "#fff7f6",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary": "#003061",
+                        "on-primary-fixed": "#410001",
+                        "on-primary-fixed-variant": "#930007",
+                        "outline-variant": "#5e3f3b",
+                        "surface-bright": "#393939",
+                        "error": "#ffb4ab",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary": "#c6c6c7",
+                        "on-background": "#e5e2e1",
+                        "on-primary": "#690003",
+                        "on-tertiary-fixed-variant": "#004689",
+                        "on-tertiary-container": "#f8f9ff",
+                        "surface-dim": "#131313",
+                        "on-surface-variant": "#e9bcb6",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "tertiary-fixed": "#d5e3ff",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed": "#001a42",
+                        "tertiary-fixed-dim": "#a7c8ff",
+                        "tertiary": "#a7c8ff",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "inverse-on-surface": "#313030",
+                        "inverse-primary": "#c0000c",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "background": "#131313",
+                        "primary": "#ffb4aa",
+                        "surface-variant": "#353534",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-container-highest": "#353534",
+                        "tertiary-container": "#0072d7",
+                        "surface-tint": "#ffb4aa",
+                        "on-tertiary-fixed": "#001b3c",
+                        "on-secondary": "#2f3131",
+                        "primary-container": "#e50914"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "xs": "8px",
+                        "column_gutter": "8px",
+                        "lg": "32px",
+                        "sm": "16px",
+                        "edge_margin": "16px",
+                        "xl": "48px",
+                        "base": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-bold": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+  body { background-color: #000000; }
+
+  /* Responsive grid for movie cards:
+     - grid auto-fills columns with a minimum size so we get ~2/3/4 columns depending on viewport */
+  #grid.grid, .grid {
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    align-items: start;
+  }
+
+  /* Tweak breakpoints for denser/larger layouts */
+  @media (min-width: 900px) {
+    #grid.grid, .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  }
+  @media (min-width: 1200px) {
+    #grid.grid, .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  }
+
+  /* Make poster cards adapt to the grid cell (smaller sizes like homepage) */
+  .poster-card, .movie-card-placeholder {
+    width: 100% !important;
+    min-width: 0 !important;
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(38,38,38,0.4) 0%, rgba(20,20,20,0.8) 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.18s ease-in-out, box-shadow 0.18s ease-in-out;
+    display: block;
+    max-width: 160px; /* cap so cards match homepage density */
+  }
+  .poster-card img, .movie-card-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .poster-card:active, .movie-card-placeholder:active {
+    border-color: #E50914;
+    transform: scale(0.98);
+  }
+
+  /* ensure the grid is responsive within any scroll wrapper */
+  .grid-wrap { overflow: auto; }
+
+</style>
+</head>
+<body class="text-on-background min-h-screen font-body-lg antialiased pb-24">
+<!-- TopAppBar Semantic Shell -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl bg-transparent flex flex-col px-edge_margin pt-sm pb-xs gap-xs">
+<div class="flex items-center justify-between w-full h-12">
+<!-- Modified back button to match prompt (blue bg) while keeping icon -->
+<button onclick="location.href='/index.html'" class="bg-transparent text-[#007AFF] w-10 h-10 rounded-full flex items-center justify-center scale-95 active:scale-90 transition-transform hover:opacity-80"><span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span></button>
+<div class="font-display-lg text-display-lg text-primary-container hidden">Brand</div>
+
+<div class="flex-1 relative"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#007AFF] text-[20px]">search</span><input class="w-full bg-[#262626] text-on-surface font-body-sm pl-10 pr-4 py-2 rounded-DEFAULT border-none focus:ring-0 focus:border-b-2 focus:border-b-primary-container transition-all" placeholder="Search movies, shows..." type="text"></div></div>
+<!-- Search Bar injected as requested -->
+<div class="flex justify-end relative"><button class="bg-white/10 hover:bg-white/20 text-on-surface font-label-bold text-label-bold py-2 px-4 rounded-full flex items-center gap-2 transition-colors" onclick="document.getElementById('genres-dropdown').classList.toggle('hidden')">Genres<span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span></button><div id="genres-dropdown" class="hidden absolute top-full right-0 mt-2 w-48 max-h-60 overflow-y-auto bg-surface-container/90 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl z-50 py-2 flex flex-col">
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Action</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Comedy</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Drama</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Horror</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Sci-Fi</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Documentary</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Romance</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Thriller</button>
+  <button class="px-4 py-3 text-left text-on-surface hover:bg-white/10 transition-colors font-body-sm" onclick="this.parentElement.classList.add('hidden')">Anime</button>
+</div></div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-32 px-edge_margin">
+  <!-- Filter / Genres Selection -->
+
+  <!-- Movie Grid -->
+  <div style="height:8px;margin:8px 0;"></div>
+  <section class="grid-wrap">
+    <div id="grid" class="grid" role="list" aria-live="polite"></div>
+    <div id="loader" class="loader">Loading...</div>
+  </section>
+</main>
+
+<!-- BottomNavBar Semantic Shell - Suppressed because this feels like a focused/transactional search or sub-category flow initiated by the back arrow context in the header, not the top level home. -->
+
+<script>
+(async function(){
+  const TMDB_KEY = 'b15142dfa85e41840fcd4ab30d82488f';
+  const TMDB_IMG = p => p ? ('https://image.tmdb.org/t/p/w500'+p) : '/no-image-available.png';
+  const grid = document.getElementById('grid');
+  const loader = document.getElementById('loader');
+
+  let page = 1;
+  let loading = false;
+  let ended = false;
+  const seenIds = new Set();
+  const SAFETY_CAP = 1000;
+
+  async function fetchDiscoverPage(p){
+    const url = new URL('https://api.themoviedb.org/3/discover/movie');
+    url.searchParams.set('api_key', TMDB_KEY);
+    url.searchParams.set('language', 'en-US');
+    url.searchParams.set('sort_by', 'popularity.desc');
+    url.searchParams.set('page', String(p));
+    try {
+      const r = await fetch(url);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return await r.json();
+    } catch (e) {
+      console.warn('fetchDiscoverPage error', e);
+      return null;
+    }
+  }
+
+  function createCard(item){
+    const id = String(item.id || '');
+    if(!id || seenIds.has(id)) return null;
+    const title = item.title || item.name || '';
+    const posterSrc = TMDB_IMG(item.poster_path || item.backdrop_path);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'poster-card relative min-w-[100px] w-[130px] aspect-[2/3] rounded-lg overflow-hidden snap-start flex-shrink-0 group cursor-pointer';
+    wrapper.dataset.tmdb = id;
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('role','listitem');
+
+    const img = document.createElement('img');
+    img.alt = title;
+    img.src = posterSrc;
+    img.className = 'poster-img';
+    img.onerror = function(){ if(!this._tried){ this._tried = true; this.src = '/no-image.png'; } };
+    wrapper.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.className = 'absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2';
+    caption.innerHTML = `<span class="text-sm text-white line-clamp-1">${title}</span>`;
+    wrapper.appendChild(caption);
+
+    wrapper.addEventListener('click', () => {
+      // deep-link to index with tmdb param so the main app can resolve to details
+      try {
+        location.href = `/index.html?tmdb=${encodeURIComponent(id)}&type=movie`;
+      } catch(e){ console.warn(e); }
+    });
+
+    seenIds.add(id);
+    return wrapper;
+  }
+
+  async function loadBatch(pagesToFetch = 1, targetAppend = 24){
+    if(loading || ended) return 0;
+    loading = true;
+    loader.textContent = 'Loading...';
+    let added = 0;
+    for(let i=0; i<pagesToFetch && !ended; i++){
+      if(grid.children.length >= SAFETY_CAP) { ended = true; break; }
+      const res = await fetchDiscoverPage(page);
+      page++;
+      if(!res || !Array.isArray(res.results) || res.results.length === 0){
+        ended = true; break;
+      }
+      for(const it of res.results){
+        if(added >= targetAppend) break;
+        const card = createCard(it);
+        if(card){ grid.appendChild(card); added++; }
+      }
+      await new Promise(r=>setTimeout(r, 80));
+    }
+    loading = false;
+    loader.textContent = ended ? (grid.children.length ? '' : 'No results') : '';
+    return added;
+  }
+
+  async function loadMore(){
+    if(loading || ended) return;
+    let totalAdded = 0;
+    while(totalAdded < 16 && !ended){
+      const a = await loadBatch(1, 16);
+      if(!a) break;
+      totalAdded += a;
+      if(grid.children.length >= SAFETY_CAP) break;
+    }
+  }
+
+  // initial warm load
+  (async function warm(){
+    try {
+      await loadBatch(3, 48);
+      if(grid.children.length < 40) await loadBatch(2, 40);
+      setTimeout(()=> { if(!loading && !ended) loadMore(); }, 300);
+    } catch(e){ console.warn(e); }
+  })();
+
+  // infinite scroll: when near bottom load more
+  const gridWrapEl = document.querySelector('.grid-wrap');
+  function onScroll(e){
+    try {
+      const el = gridWrapEl || document.scrollingElement || document.documentElement;
+      const bottom = el.scrollTop + (el.clientHeight || window.innerHeight);
+      if(bottom >= (el.scrollHeight - 600)) loadMore();
+    } catch(err){}
+  }
+  (gridWrapEl || window).addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    if(document.body.offsetHeight < window.innerHeight * 1.2) loadMore();
+  });
+
+  window.addEventListener('load', ()=> setTimeout(()=> {
+    const first = grid.querySelector('.poster-card');
+    if(first) try{ first.focus(); }catch(e){}
+  }, 250));
+})();
+</script>
+
+
+
+
+
+
+
+
+</body></html>

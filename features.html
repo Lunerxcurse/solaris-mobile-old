@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Features - Vidlo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "surface": "#111415",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c1c6d7",
+                        "on-tertiary": "#303030",
+                        "surface-container-low": "#191c1d",
+                        "primary": "#adc7ff",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#929090",
+                        "on-primary": "#002e68",
+                        "surface-container-lowest": "#0c0f10",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary-fixed-variant": "#474646",
+                        "surface-container-highest": "#323536",
+                        "on-background": "#e1e3e4",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-container": "#2a2a2a",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-primary-fixed": "#001a41",
+                        "inverse-on-surface": "#2e3132",
+                        "on-tertiary-fixed": "#1b1b1c",
+                        "outline-variant": "#414754",
+                        "secondary-container": "#4a4949",
+                        "tertiary-fixed": "#e5e2e1",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "secondary": "#c8c6c5",
+                        "on-primary-container": "#00285b",
+                        "outline": "#8b90a0",
+                        "background": "#111415",
+                        "surface-bright": "#373a3b",
+                        "on-primary-fixed-variant": "#004493",
+                        "secondary-fixed": "#e5e2e1",
+                        "surface-variant": "#323536",
+                        "tertiary": "#c8c6c5",
+                        "on-error": "#690005",
+                        "on-secondary": "#313030",
+                        "on-secondary-container": "#bab8b7",
+                        "surface-container-high": "#282a2b",
+                        "primary-fixed-dim": "#adc7ff",
+                        "primary-container": "#4a8eff",
+                        "surface-container": "#1d2021",
+                        "inverse-primary": "#005bc0",
+                        "surface-dim": "#111415",
+                        "inverse-surface": "#e1e3e4",
+                        "surface-tint": "#adc7ff",
+                        "on-surface": "#e1e3e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "64px",
+                        "unit": "8px",
+                        "container-margin": "48px",
+                        "gutter": "24px",
+                        "container-margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "display-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background-color: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, theme('colors.primary'), theme('colors.inverse-primary'));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen flex flex-col">
+<button onclick="window.history.back()" aria-label="Back" title="Back" class="text-indigo-500 p-2 rounded-full fixed left-4 top-4 z-50 bg-transparent">
+  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<main class="flex-grow">
+<!-- Hero Section -->
+<!-- Ad-Free Section -->
+<section class="py-section-gap px-container-margin-mobile md:px-container-margin bg-surface-container-lowest relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row items-center gap-section-gap">
+<div class="flex-1 space-y-gutter">
+<h2 class="font-headline-lg text-headline-lg">No Ads. <span class="text-primary">Ever.</span></h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                            Why compromise your viewing experience? While other free sites interrupt every emotional climax with unskippable ads, Vidlo believes your focus belongs to the story.
+                        </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-unit mt-[32px]">
+<div class="glass-panel p-[24px] rounded-xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-error/5 group-hover:bg-error/10 transition-colors duration-300"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-error" data-icon="block">block</span>
+<h3 class="font-headline-md text-headline-md text-error">Other Sites</h3>
+</div>
+<ul class="space-y-2 font-body-md text-body-md text-on-surface-variant">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm" data-icon="close">close</span> Intrusive pop-ups</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm" data-icon="close">close</span> Mid-roll interruptions</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm" data-icon="close">close</span> Cluttered interfaces</li>
+</ul>
+</div>
+</div>
+<div class="glass-panel p-[24px] rounded-xl relative overflow-hidden group border-primary/30">
+<div class="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors duration-300"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" data-icon="check_circle">check_circle</span>
+<h3 class="font-headline-md text-headline-md text-primary">Vidlo</h3>
+</div>
+<ul class="space-y-2 font-body-md text-body-md text-on-surface">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Zero interruptions</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Seamless playback</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Immersive design</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Multi-Device Section -->
+<section class="py-section-gap px-container-margin-mobile md:px-container-margin relative">
+<div class="max-w-7xl mx-auto text-center">
+<h2 class="font-headline-lg text-headline-lg mb-gutter">Stream <span class="text-primary">Anywhere</span></h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-section-gap">
+                    Your cinema travels with you. Seamlessly switch between devices without losing your place.
+                </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-[32px]">
+<!-- Mobile -->
+<div class="glass-panel rounded-xl p-[32px] flex flex-col items-center gap-[24px] hover:scale-[1.02] transition-transform duration-300 hover:shadow-[0_0_30px_rgba(173,199,255,0.15)] group">
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-[40px] text-on-surface-variant group-hover:text-primary transition-colors" data-icon="smartphone">smartphone</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-2">Mobile</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Perfect for commutes and quick breaks. Optimized for small screens.</p>
+</div>
+</div>
+<!-- Laptop -->
+<div class="glass-panel rounded-xl p-[32px] flex flex-col items-center gap-[24px] hover:scale-[1.02] transition-transform duration-300 hover:shadow-[0_0_30px_rgba(173,199,255,0.15)] group relative -top-[16px]">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-primary rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-[40px] text-on-surface-variant group-hover:text-primary transition-colors" data-icon="laptop_mac">laptop_mac</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-2">Laptop</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">The ideal balance of portability and immersive screen size.</p>
+</div>
+</div>
+<!-- Desktop/TV -->
+<div class="glass-panel rounded-xl p-[32px] flex flex-col items-center gap-[24px] hover:scale-[1.02] transition-transform duration-300 hover:shadow-[0_0_30px_rgba(173,199,255,0.15)] group">
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center border border-white/10 group-hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-[40px] text-on-surface-variant group-hover:text-primary transition-colors" data-icon="tv">tv</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md mb-2">Desktop &amp; TV</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Full cinematic experience. Uncompromised 4K quality where available.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+</main>
+<!-- Footer Component -->
+<script>
+  (function(){
+    const DICT = {
+      en: {
+        hero_title: "No Ads. Ever.",
+        hero_para: "Why compromise your viewing experience? While other free sites interrupt every emotional climax with unskippable ads, Vidlo believes your focus belongs to the story.",
+        partners_heading: "Movies from your favorite brands",
+        stream_anywhere: "Stream Anywhere",
+        stream_anywhere_para: "Your cinema travels with you. Seamlessly switch between devices without losing your place.",
+        mobile: "Mobile",
+        laptop: "Laptop",
+        desktop_tv: "Desktop & TV",
+        zero_ads: "No Ads. Ever.",
+        zero_ads_sub: "Why compromise your viewing experience? While other free sites interrupt every emotional climax with unskippable ads, Vidlo believes your focus belongs to the story.",
+        feature_vidlo: "Vidlo",
+        feature_other_sites: "Other Sites",
+        feature_list_item_1: "Zero interruptions",
+        feature_list_item_2: "Seamless playback",
+        feature_list_item_3: "Immersive design",
+        value_zero_ads: "Zero Ads",
+        value_all_studios: "All Major Studios",
+        value_content: "The content you love, all in one place.",
+        comparison_feature: "Feature",
+        comparison_vidlo: "Vidlo",
+        comparison_others: "Others",
+        monthly_cost: "Monthly Cost",
+        ad_experience: "Ad Experience",
+        content_label: "Content",
+        sign_up: "Sign-up",
+        fourk: "4K Streaming",
+        new_releases: "New Releases"
+      },
+      es: {
+        hero_title: "Sin anuncios. Jamás.",
+        hero_para: "¿Por qué comprometer tu experiencia de visionado? Mientras otros sitios gratuitos interrumpen cada clímax con anuncios ineludibles, Vidlo cree que tu atención pertenece a la historia.",
+        partners_heading: "Películas de tus marcas favoritas",
+        stream_anywhere: "Transmite en cualquier lugar",
+        stream_anywhere_para: "Tu cine te acompaña. Cambia de dispositivo sin perder el punto donde te quedaste.",
+        mobile: "Móvil",
+        laptop: "Portátil",
+        desktop_tv: "Escritorio y TV",
+        zero_ads: "Sin anuncios. Jamás.",
+        zero_ads_sub: "¿Por qué comprometer tu experiencia de visionado? Mientras otros sitios gratuitos interrumpen cada clímax con anuncios ineludibles, Vidlo cree que tu atención pertenece a la historia.",
+        feature_vidlo: "Vidlo",
+        feature_other_sites: "Otros sitios",
+        feature_list_item_1: "Cero interrupciones",
+        feature_list_item_2: "Reproducción fluida",
+        feature_list_item_3: "Diseño inmersivo",
+        value_zero_ads: "Sin anuncios",
+        value_all_studios: "Todos los grandes estudios",
+        value_content: "El contenido que te encanta, todo en un solo lugar.",
+        comparison_feature: "Característica",
+        comparison_vidlo: "Vidlo",
+        comparison_others: "Otros",
+        monthly_cost: "Costo mensual",
+        ad_experience: "Experiencia de anuncios",
+        content_label: "Contenido",
+        sign_up: "Registro",
+        fourk: "Transmisión 4K",
+        new_releases: "Nuevos estrenos"
+      }
+    };
+
+    // Replace exact visible strings to avoid fragile selectors and preserve icons/layout
+    function replaceExactText(from, to){
+      if(!from) return;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null);
+      const nodes = [];
+      while(walker.nextNode()){
+        const n = walker.currentNode;
+        if(n.nodeType === Node.TEXT_NODE){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        } else if(n.nodeType === 1){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        }
+      }
+      nodes.forEach(n => {
+        if(n.nodeType === Node.TEXT_NODE) n.textContent = n.textContent.replace(from, to);
+        else n.textContent = to;
+      });
+    }
+
+    function apply(lang){
+      const map = DICT[lang] || DICT.en;
+      try{
+        // Core hero
+        replaceExactText('No Ads. Ever.', map.hero_title);
+        replaceExactText('Why compromise your viewing experience? While other free sites interrupt every emotional climax with unskippable ads, Vidlo believes your focus belongs to the story.', map.hero_para);
+
+        // Partners / headings
+        replaceExactText('Movies from your favorite brands', map.partners_heading);
+        replaceExactText('Stream Anywhere', map.stream_anywhere);
+        replaceExactText('Your cinema travels with you. Seamlessly switch between devices without losing your place.', map.stream_anywhere_para);
+
+        // Device labels
+        replaceExactText('Mobile', map.mobile);
+        replaceExactText('Laptop', map.laptop);
+        replaceExactText('Desktop & TV', map.desktop_tv);
+
+        // Feature blocks text
+        replaceExactText('Vidlo', map.feature_vidlo);
+        replaceExactText('Other Sites', map.feature_other_sites);
+        replaceExactText('Zero interruptions', map.feature_list_item_1);
+        replaceExactText('Seamless playback', map.feature_list_item_2);
+        replaceExactText('Immersive design', map.feature_list_item_3);
+
+        // Value props and comparison headings
+        replaceExactText('No Ads. Ever.', map.value_zero_ads);
+        replaceExactText('All Major Studios', map.value_all_studios);
+        replaceExactText('The content you love, all in one place.', map.value_content);
+        replaceExactText('Feature', map.comparison_feature);
+        replaceExactText('Vidlo', map.comparison_vidlo);
+        replaceExactText('Others', map.comparison_others);
+        replaceExactText('Monthly Cost', map.monthly_cost);
+        replaceExactText('Ad Experience', map.ad_experience);
+        replaceExactText('Content', map.content_label);
+        replaceExactText('Sign-up', map.sign_up);
+        replaceExactText('4K Streaming', map.fourk);
+        replaceExactText('New Releases', map.new_releases);
+      }catch(e){
+        console.warn('applyFeaturesLanguage error', e);
+      }
+    }
+
+    // expose and persist choice
+    window.applyFeaturesLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){ console.warn(e); }
+    };
+
+    // Init from stored language
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      apply(stored);
+    });
+
+    // update when other tabs change language
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+
+</body></html>

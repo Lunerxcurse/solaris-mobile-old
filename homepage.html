@@ -1,0 +1,1491 @@
+<!doctype html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vidlo</title>
+  <link rel="icon" href="/698df818-6d92-4780-9dfc-d0ce7783889c.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/698df818-6d92-4780-9dfc-d0ce7783889c.png" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = { darkMode: "class", theme: { extend: {} } };
+  </script>
+  <style>
+    body { background:#0A0A0A; color:#e5e2e1; font-family: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; min-height:100dvh }
+    .hide-scrollbar::-webkit-scrollbar{display:none} .hide-scrollbar{ -ms-overflow-style:none; scrollbar-width:none }
+    /* overlay styles */
+    .vid-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.95); z-index:80; display:flex; align-items:center; justify-content:center; padding:1rem; transition: background .12s ease }
+    /* default framed player for inline previews */
+    /* responsive framed player: use aspect-ratio and clamp by viewport height so the player is always fully visible */
+    .vid-frame{
+      width:100%;
+      max-width:1200px;
+      aspect-ratio:16/9;
+      height:auto;
+      max-height:calc(100vh - 48px); /* leave room for UI chrome */
+      background:#000;
+      border-radius:8px;
+      overflow:hidden;
+      position:relative;
+      box-shadow:0 18px 60px rgba(0,0,0,0.6);
+      display:flex;
+      align-items:stretch;
+    }
+    /* full-screen modifier: cover the entire viewport and remove rounded corners */
+    .vid-overlay.fullscreen{ align-items:stretch; justify-content:stretch; padding:0; background:rgba(0,0,0,0.98) }
+    .vid-overlay.fullscreen .vid-frame{ width:100%; height:100%; max-width:none; max-height:none; border-radius:0; box-shadow:none; }
+    .close-btn{ position:absolute; left:36px; right:auto; top:26px; z-index:10 }
+
+    /* Ensure hero carousel dots render as true circles (override global button padding & min-size) */
+    .hero-dot{
+      display: inline-block;
+      width: 10px !important;
+      height: 10px !important;
+      min-width: 10px !important;
+      min-height: 10px !important;
+      padding: 0 !important;
+      margin: 0 4px !important;
+      border-radius: 50% !important;
+      background-color: rgba(255,255,255,0.4) !important;
+      border: none !important;
+      box-sizing: content-box !important;
+      vertical-align: middle !important;
+      line-height: 0 !important;
+      font-size: 0 !important; /* prevents inherited font metrics from stretching */
+    }
+    @media(min-width:768px){ .vid-frame{ height:50vh } }
+
+    /* Loading placeholders for rows (disabled) */
+    .row-loader { display: none !important; }
+
+    /* While JS may toggle a 'cards-loading' class to avoid flashes, show cards immediately */
+    .cards-loading .poster-card {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .poster-card { transition: none !important; }
+
+    .row-loader .dot,
+    .row-loader .dot::after,
+    .row-loader .dot.small,
+    .loader-center {
+      display: none !important;
+    }
+
+    /* Discover loading UI hidden */
+    #discover-loading{ display: none !important; }
+    .discover-spinner{ display: none !important; }
+
+    /* keep keyframes defined but unused to avoid CSS errors in some UA */
+    @keyframes shimmer { to { transform: translateX(120%); } }
+    @keyframes spin{ to{ transform: rotate(360deg) } }
+
+    /* Tighter poster cards for Discover panel to reduce spacing */
+    #discover-main .poster-card {
+      min-width: 110px;
+      width: 140px;
+      aspect-ratio: 2 / 3;
+    }
+    /* ensure image fills the smaller card cleanly */
+    #discover-main .poster-card .poster-img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* hide desktop sidebar when auth modal is open so login/signup covers full app */
+    body.auth-open nav.fixed.left-0 {
+      display: none !important;
+    }
+    .auth-hidden {
+      display: none !important;
+    }
+
+    /* Auth modal inputs: improved sizing, spacing, contrast and focus for sign in / sign up */
+    #auth-contents .flex.items-center.gap-3 {
+      position: relative;
+    }
+    #auth-contents input,
+    #auth-contents select,
+    #auth-contents textarea {
+      background: #0A0A0A;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #e5e2e1;
+      caret-color: #e5e2e1;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      font-size: 15px;
+      line-height: 1.2;
+      border-radius: 12px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset;
+      transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    #auth-contents input::placeholder,
+    #auth-contents textarea::placeholder {
+      color: #9ca3af;
+      opacity: 1;
+      font-size: 14px;
+    }
+    #auth-contents .flex.items-center.gap-3 .material-symbols-outlined {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+      font-size: 20px;
+    }
+    #auth-contents input:focus,
+    #auth-contents textarea:focus,
+    #auth-contents select:focus {
+      outline: none;
+      border-color: rgba(99,102,241,0.9);
+      box-shadow: 0 6px 18px rgba(99,102,241,0.08);
+      transform: translateY(-1px);
+    }
+    #auth-contents .relative { position: relative; }
+
+    #auth-contents input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container input {
+      display: none;
+    }
+
+    .container svg {
+      overflow: visible;
+      display: inline-block;
+      vertical-align: middle;
+      width: 20px;
+      height: 20px;
+    }
+
+    .path {
+      fill: none;
+      stroke: white;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
+      stroke-dasharray: 241 9999999;
+      stroke-dashoffset: 0;
+      opacity: 0.35;
+    }
+
+    .container input:checked ~ svg .path {
+      stroke-dasharray: 70.5096664428711 9999999;
+      stroke-dashoffset: -262.2723388671875;
+      opacity: 1;
+    }
+
+    .container input:focus-visible ~ svg {
+      outline: 3px solid rgba(99,102,241,0.14);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    .switch {
+      font-size: 17px;
+      position: relative;
+      display: inline-block;
+      width: 3.5em;
+      height: 2em;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgb(182, 182, 182);
+      transition: .4s;
+      border-radius: 10px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 1.4em;
+      width: 1.4em;
+      border-radius: 8px;
+      left: 0.3em;
+      bottom: 0.3em;
+      transform: rotate(270deg);
+      background-color: rgb(255, 255, 255);
+      transition: .4s;
+    }
+    .switch input:checked + .slider {
+      background-color: #21cc4c;
+    }
+    .switch input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    .switch input:checked + .slider:before {
+      transform: translateX(1.5em);
+    }
+
+    .custom-select {
+      position: relative;
+      display: inline-block;
+      min-width: 160px;
+      border-radius: 9999px;
+      background: transparent;
+      border: 0;
+      font-size: 15px;
+      color: var(--tw-text-opacity, #e5e2e1);
+    }
+    .custom-select .sel-btn {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #e5e2e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .custom-select .sel-btn .label {
+      margin-right: 0;
+      white-space: nowrap;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .custom-select .chev {
+      font-size: 18px;
+      color: rgba(229,226,225,0.8);
+      transform: translateY(0);
+      transition: transform .18s ease;
+    }
+    .custom-select.open .chev { transform: rotate(180deg); }
+    .custom-select .sel-list {
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: linear-gradient(180deg, #0F0F10, #161617);
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      border-radius: 12px;
+      padding: 6px;
+      z-index: 99999;
+      min-width: 180px;
+      max-height: 45vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      transition: transform .12s ease, opacity .12s ease;
+      transform-origin: top right;
+      display: block;
+      pointer-events: auto;
+    }
+    .custom-select .sel-list.hidden { display: none; }
+    .custom-select .sel-list li {
+      list-style: none;
+      padding: 10px 12px;
+      cursor: pointer;
+      color: #e5e2e1;
+      border-radius: 8px;
+    }
+    .custom-select .sel-list li:hover,
+    .custom-select .sel-list li[aria-selected="true"] {
+      background: rgba(255,255,255,0.02);
+      color: #fff;
+    }
+    .custom-select .sel-list li .meta { display:block; font-size:12px; color: #9ca3af; margin-top:4px }
+
+    .blurred-unwatched img {
+      filter: blur(6px) saturate(.9);
+      transform-origin: center;
+      transition: filter .22s ease, transform .22s ease;
+    }
+    .blurred-unwatched::after{
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.28), rgba(10,10,10,0.0));
+      pointer-events: none;
+    }
+    .blurred-unwatched .unwatched-badge {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      z-index: 6;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Hide the unwatched badge when shown inside settings panels (original and desktop clone)
+       so it does not appear over the settings UI */
+    #settings-panel .unwatched-badge,
+    #settings-panel-desktop .unwatched-badge {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .blurred-unwatched .unwatched-badge .material-symbols-outlined {
+      font-size: 14px;
+    }
+
+    /* removed mobile-specific styles and nav sizing to make this laptop-only */
+
+    /* Collapsed sidebar styles (icons-only) */
+    /* Add transitions so collapsing/expanding is animated */
+    nav.fixed.left-0 {
+      transition: width .32s cubic-bezier(.2,.9,.2,1), padding .28s ease, transform .28s ease;
+      will-change: width, padding;
+    }
+    main#app {
+      transition: margin-left .32s cubic-bezier(.2,.9,.2,1), padding-left .28s ease;
+      will-change: margin-left, padding-left;
+    }
+    #sidebar-collapse {
+      transition: left .32s cubic-bezier(.2,.9,.2,1), width .28s ease, height .28s ease, transform .32s ease, background-color .18s ease;
+      will-change: left, transform;
+    }
+
+    .collapsed-sidebar nav.fixed.left-0 {
+      width: 72px !important;
+      min-width: 72px !important;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    /* Ensure Live TV label and "Coming Soon" badge stay inline and don't wrap/overlap */
+    nav.fixed.left-0 .livetv-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+    nav.fixed.left-0 .livetv-row > * {
+      white-space: nowrap;
+    }
+    /* hide brand, footer links and app version when sidebar is collapsed */
+    .collapsed-sidebar nav.fixed.left-0 .mb-12,
+    .collapsed-sidebar nav.fixed.left-0 .mb-8,
+    .collapsed-sidebar nav.fixed.left-0 #sidebar-brand {
+      display: none !important;
+    }
+    /* hide bottom footer (Vidlo label, legal/status/features links and version) when collapsed */
+    .collapsed-sidebar nav.fixed.left-0 #sidebar-footer {
+      display: none !important;
+    }
+    /* ensure any footer anchor text is hidden in collapsed state as a fallback */
+    .collapsed-sidebar nav.fixed.left-0 #sidebar-footer a,
+    .collapsed-sidebar nav.fixed.left-0 #sidebar-footer span,
+    .collapsed-sidebar nav.fixed.left-0 #sidebar-footer .text-neutral-500 {
+      display: none !important;
+    }
+    .collapsed-sidebar nav.fixed.left-0 ul { gap: 0.25rem; }
+    .collapsed-sidebar nav.fixed.left-0 a { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .collapsed-sidebar nav.fixed.left-0 a .material-symbols-outlined { font-size: 20px; }
+    /* hide all text labels in collapsed state while keeping icons visible */
+    .collapsed-sidebar nav.fixed.left-0 a > span:not(.material-symbols-outlined) { display: none !important; }
+
+    /* When sidebar is collapsed make the Live TV row icon-only:
+       - center the icon, hide its text label and the "Coming Soon" badge
+       - nudge the icon slightly to the right so it visually aligns in the narrow sidebar */
+    .collapsed-sidebar nav.fixed.left-0 .livetv-row {
+      justify-content: center;
+      gap: 0;
+      padding-left: 1.2rem;
+      padding-right: 0.6rem;
+    }
+    .collapsed-sidebar nav.fixed.left-0 .livetv-row > span:not(.material-symbols-outlined),
+    .collapsed-sidebar nav.fixed.left-0 .livetv-row .ml-auto {
+      display: none !important;
+      visibility: hidden !important;
+      width: 0 !important;
+      max-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    /* adjust collapse button to sit on the edge when collapsed */
+    .collapsed-sidebar #sidebar-collapse { left: 72px; transform: translateX(-50%) translateY(-50%); width: 40px; height: 40px; top: 50%; }
+    /* shift main content over when sidebar collapsed */
+    .collapsed-sidebar main#app { margin-left: 72px !important; padding-left: 12px; }
+    /* ensure discover/desktop clones respect sidebar spacing */
+    .collapsed-sidebar #discover-panel-desktop,
+    .collapsed-sidebar #watchlist-panel,
+    .collapsed-sidebar #watchlist-panel-desktop,
+    .collapsed-sidebar #settings-panel-desktop,
+    .collapsed-sidebar #discover-panel { left: 72px !important; width: calc(100% - 72px) !important; }
+
+    /* --- Button improvements: consistent sizing, elevation, hover/focus states, and icon spacing --- */
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.02) inset;
+      transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s ease, background-color .12s ease, opacity .12s ease;
+      min-height: 44px;
+      line-height: 1;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Season button glow when active (selected) */
+    .season-btn {
+      transition: box-shadow .18s ease, transform .18s cubic-bezier(.2,.9,.2,1), background-color .12s ease, color .12s ease;
+      will-change: box-shadow, transform;
+      /* set a neutral transform origin for smooth lift/scale */
+      transform-origin: center;
+    }
+    /* Hover animation: subtle lift + scale with gentle shadow */
+    .season-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 16px 36px rgba(59,130,246,0.12), 0 6px 14px rgba(0,0,0,0.35);
+      color: #fff;
+    }
+    /* Pressed/active state should feel tactile (slightly lower) */
+    .season-btn:active {
+      transform: translateY(-1px) scale(0.995);
+      box-shadow: 0 8px 18px rgba(59,130,246,0.10), 0 3px 8px rgba(0,0,0,0.4);
+    }
+    /* Apply visible glow / elevation when the season button is marked active (bg-blue-600 is used to indicate selection) */
+    .season-btn.bg-blue-600,
+    .season-btn[aria-pressed="true"] {
+      box-shadow: 0 12px 30px rgba(59,130,246,0.20), 0 4px 10px rgba(59,130,246,0.10);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+    /* Stronger focus ring for keyboard users */
+    .season-btn:focus-visible {
+      outline: none;
+      box-shadow: 0 14px 36px rgba(59,130,246,0.18), 0 0 0 4px rgba(59,130,246,0.10);
+      transform: translateY(-2px);
+    }
+    /* Primary / filled style */
+    button.bg-indigo-600, button[style*="background: rgb(99,102,241)"], .btn-primary {
+      background: linear-gradient(180deg, #4f46e5, #3730a3);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 10px 30px rgba(79,70,229,0.18);
+      color: #fff;
+    }
+    button.bg-indigo-600:hover, .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 40px rgba(79,70,229,0.22);
+      opacity: 0.98;
+    }
+    button.bg-indigo-600:active, .btn-primary:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(0,0,0,0.5); }
+
+    /* Ghost / outline style */
+    button.bg-transparent.border, .btn-ghost, button.bg-transparent.border-neutral-700 {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e5e2e1;
+      box-shadow: none;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.025);
+      transform: translateY(-1px);
+    }
+
+    /* Large CTA */
+    .btn-large {
+      padding: 0.9rem 1.25rem;
+      border-radius: 14px;
+      font-size: 1.02rem;
+    }
+
+    /* Icon-only small buttons (close, back) */
+    .close-btn, .icon-btn, .p-2 {
+      padding: 0.5rem;
+      min-width: 40px;
+      min-height: 40px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+    }
+    .close-btn:hover, .icon-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.04); }
+
+    /* Trailer / play buttons accent */
+    #play-btn, #trailer-btn {
+      border-radius: 14px;
+      gap: 0.75rem;
+    }
+    #play-btn { background: linear-gradient(90deg,#4f46e5,#6366f1); box-shadow: 0 12px 30px rgba(79,70,229,0.16); }
+    #trailer-btn { border: 1px solid rgba(255,255,255,0.06); background: transparent; color: #e5e2e1; }
+
+    /* HERO CAROUSEL CAPTION: use a stable class so layout can be adjusted responsively.
+       On small screens raise the caption (increase bottom offset) so the Play/Trailer buttons
+       don't overlap the description. Also ensure the slide backgrounds scale to fill the viewport
+       so hero images adapt to screen size. */
+    .hero-caption{
+      position:absolute;
+      left:2%;
+      bottom:8%;
+      max-width:60%;
+      color:#fff;
+      padding:18px;
+    }
+
+    /* Ensure each hero slide image fills the slide area and responds to viewport changes */
+    .hero-slide {
+      background-repeat: no-repeat !important;
+      background-size: cover !important;
+      background-position: center center !important;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    /* Make the carousel container flexible so slides always match viewport height */
+    #hero-carousel {
+      min-height: 50vh;
+      height: min(85vh, calc(100vh - 120px));
+      max-height: 92vh;
+    }
+
+    @media (max-width: 900px){
+      /* on narrower viewports lift the caption higher to avoid control overlap */
+      .hero-caption{
+        left:2%;
+        right:3%;
+        bottom:20%;
+        max-width:94%;
+        padding:14px;
+      }
+      /* ensure smaller text scales and has more available height (reduced) */
+      .hero-caption h2{ font-size:clamp(14px,3vw,24px); line-height:1.05; margin-bottom:6px }
+      .hero-caption p{ font-size:clamp(12px,2.2vw,15px); }
+    }
+
+    /* Focus styles for keyboard users */
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
+      transform: translateY(-1px);
+    }
+
+    /* Ensure icons inside buttons are sized and aligned */
+    button .material-symbols-outlined {
+      font-size: 18px;
+      opacity: 0.96;
+      display: inline-flex;
+      vertical-align: middle;
+      line-height: 1;
+    }
+
+    /* Ensure Live TV icon matches other sidebar icons */
+    #sidebar-livetv .material-symbols-outlined {
+      font-size: 18px;
+      opacity: 0.96;
+      display: inline-flex;
+      vertical-align: middle;
+      line-height: 1;
+    }
+
+    /* Restore normal size for action icons in the details modal (like, dislike, watchlist, share) */
+    #like-btn .material-symbols-outlined,
+    #dislike-btn .material-symbols-outlined,
+    #watchlist-btn .material-symbols-outlined,
+    #share-btn .material-symbols-outlined {
+      font-size: 24px;
+      opacity: 1;
+    }
+
+    /* Small responsive tweak for compact side action buttons */
+    @media (max-width: 900px) {
+      button { padding: 0.6rem 0.9rem; }
+      .btn-large { padding: 0.75rem 1rem; }
+    }
+
+  </style>
+<style>
+  /* Ensure hero CTA buttons remain appropriately sized on small viewports */
+  .hero-caption .play-hero,
+  .hero-caption .trailer-hero,
+  .hero-caption button {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.95rem;
+    max-width: 220px;
+    box-sizing: border-box;
+  }
+
+  /* Tighter caps for narrow screens to prevent oversized buttons */
+  @media (max-width: 900px) {
+    .hero-caption .play-hero,
+    .hero-caption .trailer-hero,
+    .hero-caption button {
+      padding: 0.35rem 0.6rem !important;
+      font-size: 0.85rem !important;
+      max-width: 160px !important;
+    }
+
+    /* keep caption spacing stable on small screens */
+    .hero-caption {
+      bottom: 18% !important;
+      max-width: 94% !important;
+    }
+  }
+</style>
+</head>
+<body class="font-body-md text-body-md antialiased">
+
+
+
+      </div>
+      <div class="text-neutral-500 font-mono text-[12px]">v1.4.2</div>
+    </div>
+  </div>
+
+  <button id="sidebar-collapse" class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-16 bg-[#0A0A0A] border border-white/10 rounded-full flex items-center justify-center text-gray-500 hover:text-white transition-all duration-300 group shadow-2xl z-50 hover:bg-white/5" title="Minimize Sidebar">
+    <span class="material-symbols-outlined text-[20px] transition-transform duration-300 group-hover:-translate-x-0.5" style="font-variation-settings: 'wght' 300;">chevron_left</span>
+  </button>
+</nav>
+
+<!-- MAIN -->
+<main class="flex-1 space-y-10 px-0 pb-16 w-full" id="app" style="margin-left:0!important;width:100%!important">
+
+<!-- Search results -->
+<div class="px-12 -mt-4" id="search-results-wrap">
+<div class="hidden max-w-[1400px] flex flex-wrap gap-4 hide-scrollbar pb-4" id="search-results"></div>
+</div>
+<!-- HERO CAROUSEL -->
+<div class="w-full relative -mt-24 mb-8" id="hero-carousel-wrap">
+<div class="relative w-full overflow-hidden bg-black select-none" id="hero-carousel" style="height: min(85vh, calc(100vh - 120px)); min-height:360px; max-height:92vh; cursor: grab;">
+<div class="absolute bottom-6 right-28 z-30 flex gap-2" id="hero-dots"></div>
+</div>
+</div>
+<script>
+    (function(){
+      const CAROUSEL_ID = 'hero-carousel';
+      const DOTS_ID = 'hero-dots';
+      const TMDB_KEY = 'b15142dfa85e41840fcd4ab30d82488f';
+      const IMG = (p) => p ? ('https://image.tmdb.org/t/p/original' + p) : '/no-image-available.png';
+      const wrap = document.getElementById(CAROUSEL_ID);
+      if(!wrap) return;
+
+      let slides = [];
+      let GENRE_MAP = {}; 
+      let current = 0;
+      let timer = null;
+      const INTERVAL = 6000;
+
+      function buildSlide(item){
+        const slide = document.createElement('div');
+        slide.className = 'hero-slide absolute inset-0 transition-opacity duration-1000';
+        slide.style.opacity = '0';
+        
+        // Netflix-style immersive gradients
+        slide.style.backgroundImage = `
+          linear-gradient(to top, #050505 0%, rgba(5,5,5,0.7) 20%, transparent 50%), 
+          linear-gradient(to right, #050505 0%, rgba(5,5,5,0.6) 40%, transparent 100%), 
+          url('${IMG(item.backdrop_path || item.poster_path)}')`;
+        slide.style.backgroundSize = 'cover';
+        slide.style.backgroundPosition = 'center top';
+
+        const rawDesc = (item.overview || '').replace(/\s+/g, ' ').trim();
+        const DESC_LIMIT = 200;
+        const desc = rawDesc.length > DESC_LIMIT ? rawDesc.slice(0, DESC_LIMIT) + '...' : rawDesc;
+
+        const metaYear = (item.release_date || item.first_air_date || '').slice(0,4) || '';
+        const metaScore = (typeof item.vote_average !== 'undefined' && item.vote_average !== null) ? (Number(item.vote_average).toFixed(1)) : '';
+        const matchPercent = metaScore ? Math.round(metaScore * 10) + '% Match' : 'New';
+        
+        let metaCategory = 'Movie';
+        if(item.media_type === 'tv') metaCategory = 'Series';
+
+        slide.innerHTML = `
+          <div class="hero-caption" style="left: 2%; bottom: 12%; max-width: 45%;">
+            <h2 style="margin:0; font-size:clamp(1.4rem, 2.6vw, 2.4rem); font-weight:800; line-height:1.1; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); margin-bottom: 1rem; letter-spacing: -0.02em;">
+              ${(item.title || item.name || '').replace(/"/g,'')}
+            </h2>
+
+            <div style="display:flex; gap: 0.75rem; align-items: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); margin-bottom: 0.9rem; font-weight: 500; font-size: 0.85rem;">
+              <span style="color:#22c55e; font-weight:700; font-size:0.95rem;">${matchPercent}</span>
+              <span style="font-size:0.85rem;">${metaYear}</span>
+              <span style="border: 1px solid rgba(255,255,255,0.4); padding: 0 0.32rem; border-radius: 4px; font-size: 0.75rem; background: rgba(0,0,0,0.3);">HD</span>
+              <span style="color: #a3a3a3; font-size:0.85rem;">${metaCategory}</span>
+            </div>
+
+            <p style="margin-bottom:1.5rem; color:rgba(255,255,255,0.9); font-size:clamp(0.85rem, 1vw, 0.95rem); line-height: 1.4; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); max-width: 90%;">
+              ${desc}
+            </p>
+
+            <div style="display:flex; gap: 1rem;">
+              <button data-tmdb="${item.id}" class="play-hero" data-type="${item.media_type || (item.title ? 'movie' : 'series')}" style="background: white; color: black; border-radius: 4px; padding: 0.45rem 0.9rem; font-size: 0.95rem; font-weight: 700; display:flex; align-items:center; gap: 0.4rem; transition: background 0.2s;">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 18px;">play_arrow</span> 
+                <span class="btn-label" data-i18n="play-btn">Play</span>
+              </button>
+              <button data-tmdb="${item.id}" data-type="${item.media_type || (item.title ? 'movie' : 'series')}" class="trailer-hero" style="background: rgba(109, 109, 110, 0.7); color: white; border-radius: 4px; padding: 0.45rem 0.9rem; font-size: 0.95rem; font-weight: 700; display:flex; align-items:center; gap: 0.4rem; transition: background 0.2s;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">info</span> 
+                <span class="btn-label" data-i18n="trailer-btn">More Info</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Helper to resolve TMDB id -> IMDb id (returns null on failure)
+        async function resolveTmdbToImdb(tmdbId, kind = 'movie'){
+          try{
+            const extUrl = kind === 'tv' ? tmdb.externalIdsTvByTmdbId(tmdbId) : tmdb.externalIdsByTmdbId(tmdbId);
+            const r = await fetch(extUrl);
+            const j = await r.json();
+            return (j && (j.imdb_id || j.imdbId)) ? (j.imdb_id || j.imdbId) : null;
+          }catch(e){
+            console.warn('Failed to resolve TMDB -> IMDb for', tmdbId, e);
+            return null;
+          }
+        }
+
+        slide.querySelectorAll('.play-hero').forEach(b => {
+          b.addEventListener('mouseover', () => b.style.background = 'rgba(255,255,255,0.8)');
+          b.addEventListener('mouseout', () => b.style.background = 'white');
+          // click: resolve tmdb -> imdb and then call top-level play functions so the video overlay opens
+          b.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            const tmdbId = b.dataset.tmdb;
+            const type = (b.dataset.type || 'movie').toString().toLowerCase();
+            const titleEl = slide.querySelector('h2');
+            const titleText = titleEl ? titleEl.textContent.trim() : '';
+            // Resolve IMDb id first
+            const imdbId = await resolveTmdbToImdb(tmdbId, (type === 'tv' || type === 'series') ? 'tv' : 'movie');
+            if(imdbId){
+              try{
+                if (type === 'tv' || type === 'series') {
+                  // play first episode of season 1
+                  if(window.playTVEpisode) window.playTVEpisode(imdbId, 1, 1, titleText);
+                  else if(window.parent && window.parent.playTVEpisode) window.parent.playTVEpisode(imdbId, 1, 1, titleText);
+                } else {
+                  if(window.playMovie) window.playMovie(imdbId, titleText);
+                  else if(window.parent && window.parent.playMovie) window.parent.playMovie(imdbId, titleText);
+                }
+                return;
+              }catch(e){
+                console.warn('play error after resolve', e);
+              }
+            }
+            // fallback: if resolve failed, try top-level functions with TMDB id (best-effort)
+            try{
+              if (type === 'tv' || type === 'series') {
+                if(window.playTVEpisode) window.playTVEpisode(String(tmdbId), 1, 1, titleText);
+                else if(window.parent && window.parent.playTVEpisode) window.parent.playTVEpisode(String(tmdbId), 1, 1, titleText);
+              } else {
+                if(window.playMovie) window.playMovie(String(tmdbId), titleText);
+                else if(window.parent && window.parent.playMovie) window.parent.playMovie(String(tmdbId), titleText);
+              }
+            }catch(err){
+              console.warn('Final play fallback failed', err);
+            }
+          });
+        });
+
+        slide.querySelectorAll('.trailer-hero').forEach(b => {
+          b.addEventListener('mouseover', () => b.style.background = 'rgba(109, 109, 110, 0.4)');
+          b.addEventListener('mouseout', () => b.style.background = 'rgba(109, 109, 110, 0.7)');
+
+          // "More Info" should open the details view by resolving TMDB -> IMDb and calling openDetails.
+          b.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            const tmdbId = b.dataset.tmdb;
+            const type = (b.dataset.type || 'movie').toString().toLowerCase();
+            const isTV = (type === 'tv' || type === 'series');
+
+            // helper (reuse existing tmdb helpers when available) to resolve tmdb -> imdb
+            async function resolveTmdbToImdbLocal(id, kind){
+              try{
+                // prefer the provided helper if present
+                if (typeof tmdb !== 'undefined' && tmdb.externalIdsByTmdbId) {
+                  const url = kind === 'tv' ? tmdb.externalIdsTvByTmdbId(id) : tmdb.externalIdsByTmdbId(id);
+                  const r = await fetch(url);
+                  const j = await r.json();
+                  return (j && (j.imdb_id || j.imdbId)) ? (j.imdb_id || j.imdbId) : null;
+                }
+                // fallback: call TMDB external ids endpoints directly
+                const fallbackUrl = kind === 'tv'
+                  ? `https://api.themoviedb.org/3/tv/${encodeURIComponent(id)}/external_ids?api_key=${TMDB_KEY}`
+                  : `https://api.themoviedb.org/3/movie/${encodeURIComponent(id)}/external_ids?api_key=${TMDB_KEY}`;
+                const resp = await fetch(fallbackUrl);
+                const json = await resp.json();
+                return (json && (json.imdb_id || json.imdbId)) ? (json.imdb_id || json.imdbId) : null;
+              }catch(err){
+                console.warn('resolveTmdbToImdbLocal failed', err);
+                return null;
+              }
+            }
+
+            try{
+              const imdbId = await resolveTmdbToImdbLocal(tmdbId, isTV ? 'tv' : 'movie');
+              if(imdbId){
+                // prefer top-level openDetails (handles modal/pop state)
+                if(window.openDetails) {
+                  window.openDetails(imdbId, isTV ? 'series' : 'movie');
+                } else if(window.parent && window.parent.openDetails) {
+                  window.parent.openDetails(imdbId, isTV ? 'series' : 'movie');
+                } else {
+                  // fallback: deep-link using query params so host can handle it
+                  window.location.href = `/?recordType=details&imdb=${encodeURIComponent(imdbId)}&type=${isTV ? 'series' : 'movie'}`;
+                }
+                return;
+              }
+            }catch(e){
+              console.warn('Failed to resolve TMDB -> IMDb for details', e);
+            }
+
+            // If resolution failed, fall back to opening details by TMDB id as best-effort deep link
+            try {
+              const fallbackUrl = `/?tmdb=${encodeURIComponent(tmdbId)}&type=${isTV ? 'tv' : 'movie'}`;
+              window.location.href = fallbackUrl;
+            } catch (e) {
+              console.warn('Final fallback for more-info failed', e);
+            }
+          });
+        });
+
+        return slide;
+      }
+
+      function renderDots(count){
+        const dots = document.getElementById(DOTS_ID);
+        if(!dots) return;
+        dots.innerHTML = '';
+        for(let i=0;i<count;i++){
+          const d = document.createElement('button');
+          d.className = 'hero-dot';
+          d.style.opacity = i===0 ? '1' : '0.5';
+          d.dataset.index = i;
+          d.addEventListener('click', ()=> goTo(Number(d.dataset.index)));
+          dots.appendChild(d);
+        }
+      }
+
+      function showIndex(i){
+        const all = wrap.querySelectorAll('.hero-slide');
+        all.forEach((s, idx) => {
+          s.style.opacity = idx === i ? '1' : '0';
+          s.style.pointerEvents = idx === i ? 'auto' : 'none';
+        });
+        const dots = document.getElementById(DOTS_ID);
+        if(dots){
+          Array.from(dots.children).forEach((dot, idx) => {
+            dot.style.opacity = idx === i ? '1' : '0.5';
+          });
+        }
+        current = i;
+      }
+
+      function next(){ goTo((current + 1) % slides.length); }
+      function prev(){ goTo((current - 1 + slides.length) % slides.length); }
+      function goTo(i){
+        if(!slides.length) return;
+        showIndex(i);
+        resetTimer();
+      }
+      function resetTimer(){
+        if(timer) clearInterval(timer);
+        timer = setInterval(next, INTERVAL);
+      }
+
+      // Swipe/Drag functionality
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+      const SWIPE_THRESHOLD = 100;
+
+      function handleDragStart(e) {
+        if (e.type === 'mousedown' && e.button !== 0) return;
+        if (e.target.closest('button')) return; // Allow button clicks
+
+        startX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+        isDragging = true;
+        currentX = startX;
+        wrap.style.cursor = 'grabbing';
+        
+        if (timer) clearInterval(timer);
+      }
+
+      function handleDragMove(e) {
+        if (!isDragging) return;
+        currentX = e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+      }
+
+      function handleDragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        wrap.style.cursor = 'grab';
+        
+        const deltaX = currentX - startX;
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+          if (deltaX > 0) {
+            prev();
+          } else {
+            next();
+          }
+        } else {
+          resetTimer();
+        }
+      }
+
+      wrap.addEventListener('mousedown', handleDragStart);
+      wrap.addEventListener('touchstart', handleDragStart, { passive: true });
+      wrap.addEventListener('mousemove', handleDragMove);
+      wrap.addEventListener('touchmove', handleDragMove, { passive: true });
+      wrap.addEventListener('mouseup', handleDragEnd);
+      wrap.addEventListener('touchend', handleDragEnd);
+      wrap.addEventListener('mouseleave', handleDragEnd);
+
+      (async function loadFeatured(){
+        try{
+          const url = `https://api.themoviedb.org/3/trending/all/day?api_key=${TMDB_KEY}`;
+          const res = await fetch(url);
+          const j = await res.json();
+          const items = (j && Array.isArray(j.results)) ? j.results.filter(i => i.backdrop_path).slice(0,5) : [];
+
+          for(const it of items){
+            const slide = buildSlide(it);
+            wrap.appendChild(slide);
+            slides.push(slide);
+          }
+          if(slides.length) {
+            renderDots(slides.length);
+            showIndex(0);
+            resetTimer();
+          }
+        }catch(e){
+          console.error('carousel load failed', e);
+        }
+      })();
+    })();
+  </script>
+<!-- Rows styling: more spacing, bold titles -->
+<style>
+    section h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.01em; margin-bottom: 0.3125rem; }
+    /* Reduced left padding to remove unnecessary blank space along left edge and tighten vertical rhythm */
+    .row-container { padding-left: 1rem; padding-right: 1rem; max-width: 1800px; margin-left: auto; margin-right: auto; margin-bottom: 0.5rem; }
+    /* tightened vertical spacing in horizontal scroll rows so rows sit closer together */
+    .scroll-row { padding-bottom: 0.5rem; padding-top: 0.125rem; gap: 0.45rem; }
+
+    /* Top 10 Row Styling: large rank sits behind posters and is half-covered by them */
+    .top10-item {
+      display: flex;
+      align-items: flex-end;
+      position: relative;
+      flex-shrink: 0;
+      padding-right: 0;
+      padding-left: 0;
+      margin-right: 0.75rem; /* modest horizontal spacing between items */
+      overflow: visible; /* allow rank to overflow behind posters */
+    }
+    .top10-rank {
+      font-size: 160px;
+      font-weight: 900;
+      line-height: 0.75;
+      color: #fff;
+      margin-right: -8px; /* slightly reduced overlap */
+      z-index: 0; /* sit behind posters so it's visually cut */
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+      letter-spacing: -0.05em;
+      transform: translateY(-6%); /* nudged upward so the number sits higher behind posters */
+    }
+    .top10-poster {
+      width: 170px;
+      aspect-ratio: 2 / 3;
+      border-radius: 8px;
+      z-index: 2;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+      will-change: box-shadow;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.45);
+    }
+    .top10-poster:hover {
+      z-index: 10;
+      position: relative;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.8), 0 0 18px rgba(255,255,255,0.12);
+    }
+    .top10-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.35s ease;
+    }
+    .top10-poster:hover img {
+      transform: scale(1.08);
+    }
+
+    /* Studio card styles: make studio images sit cleanly inside a card with consistent sizing */
+    .studio-card {
+      min-width: 150px;
+      width: 150px;
+      height: 88px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(18,18,18,1) 0%, rgba(12,12,12,1) 100%);
+      border: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+      cursor: pointer;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .studio-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.55);
+      border-color: rgba(255,255,255,0.08);
+    }
+    .studio-card .studio-card-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .studio-card img, .studio-card .studio-logo {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Make Prime Video and Disney+ logos larger and more prominent */
+    .studio-card img[alt="Amazon Prime Video"],
+    .studio-card img[alt="Disney+"] {
+      transform: scale(1.18);
+      transition: transform 0.16s ease, filter 0.12s ease;
+      max-height: 130%;
+      display: block;
+      filter: none;
+    }
+    .studio-card img[alt="Disney+"] {
+      filter: brightness(1.6) contrast(1.12) saturate(1.12);
+      transform: scale(1.22);
+    }
+    .studio-card:hover img[alt="Amazon Prime Video"],
+    .studio-card:hover img[alt="Disney+"] {
+      transform: scale(1.28);
+    }
+    .studio-card:hover img[alt="Disney+"] {
+      filter: brightness(1.8) contrast(1.15) saturate(1.18);
+      transform: scale(1.3);
+    }
+
+    .studio-card img[alt="HBO Max"],
+    .studio-card img[alt="HBO Max"].studio-logo {
+      filter: invert(1) brightness(1.9) contrast(1.08);
+    }
+  </style>
+<section class="row-container mb-6">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Top 10 Trending Today</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="top-10-row"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Popular - Movie</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="popular-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Popular - Series</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="popular-series"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Estudios</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x">
+  <a href="/netflix.html" target="_top" class="studio-card" title="Netflix" aria-label="Netflix">
+    <div class="studio-card-inner">
+      <img alt="Netflix" class="studio-logo" src="/215-2154144_transparent-background-netflix-logo__1_-removebg-preview.png" />
+    </div>
+  </a>
+  <a href="/hulu.html" target="_top" class="studio-card" title="Hulu" aria-label="Hulu">
+    <div class="studio-card-inner">
+      <img alt="Hulu" class="studio-logo" src="/Hulu-Logo.wine.svg" />
+    </div>
+  </a>
+  <a href="/prime-video.html" target="_top" class="studio-card" title="Prime Video" aria-label="Prime Video">
+    <div class="studio-card-inner">
+      <img alt="Prime Video" class="studio-logo" src="/amazon-prime-video-logo-1160935492577exbdaecs-removebg-preview.png" />
+    </div>
+  </a>
+  <a href="/peacock.html" target="_top" class="studio-card" title="Peacock" aria-label="Peacock">
+    <div class="studio-card-inner">
+      <img alt="Peacock" class="studio-logo" src="/nbc-peacock-removebg-preview.png" />
+    </div>
+  </a>
+  <a href="/paramount-plus.html" target="_top" class="studio-card" title="Paramount+" aria-label="Paramount+">
+    <div class="studio-card-inner">
+      <img alt="Paramount+" class="studio-logo" src="/Paramount+_logo.png" />
+    </div>
+  </a>
+  <a href="/disney-plus.html" target="_top" class="studio-card" title="Disney+" aria-label="Disney+">
+    <div class="studio-card-inner">
+      <img alt="Disney+" class="studio-logo" src="/disney-logo-disney-icon-transparent-free-png.png" />
+    </div>
+  </a>
+  <a href="/hbo-max.html" target="_top" class="studio-card" title="HBO Max" aria-label="HBO Max">
+    <div class="studio-card-inner">
+      <img alt="HBO Max" class="studio-logo" src="/HBO_Max-Logo.wine.svg" />
+    </div>
+  </a>
+</div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Series</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="series-row"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Marvel Movies</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="marvel-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Disney Movies</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="disney-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Peacock Movies</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="peacock-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Classics</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="classics"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">HBO Max Movies</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="hbo-max-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">HBO Max Series</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="hbo-max-series"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Netflix Movies</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="netflix-movies"></div>
+</section>
+<section class="row-container">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Netflix Series</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="netflix-series"></div>
+</section>
+<section class="row-container mb-12">
+<div class="flex justify-between items-end mb-2">
+<h2 class="text-white">Featured - Movie</h2>
+</div>
+<div class="flex overflow-x-auto hide-scrollbar scroll-row snap-x" id="featured-movie"></div>
+</section>
+</main>
+
+<script>
+(async function(){
+  const TMDB_KEY = 'b15142dfa85e41840fcd4ab30d82488f';
+  const tmdbSearch = (q)=> `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}&page=1`;
+  const posterUrl = (path)=> path ? `https://image.tmdb.org/t/p/w500${path}` : '/no-image.png';
+
+  // mapping: containerId -> representative queries (will try each until items found)
+  const ROW_MAP = {
+    'popular-movies': ['Inception','Avengers','Interstellar','The Dark Knight'],
+    'popular-series': ['Breaking Bad','Stranger Things','The Crown','The Mandalorian'],
+    'series-row': ['Game of Thrones','Fargo','Chernobyl','Westworld'],
+    'marvel-movies': ['Iron Man','Thor','Captain America','Black Panther'],
+    'disney-movies': ['Frozen','Moana','Aladdin','The Lion King'],
+    'peacock-movies': ['Bridesmaids','The Matrix','Jurassic World','The Informer'],
+    'classics': ['Casablanca','Citizen Kane','Gone with the Wind','Rear Window'],
+    'hbo-max-movies': ['Joker','Dune','The Little Things','The Suicide Squad'],
+    'hbo-max-series': ['Succession','Euphoria','The Last of Us','House of the Dragon'],
+    'netflix-movies': ['Roma','The Irishman','Bird Box','Extraction'],
+    'netflix-series': ['Stranger Things','Ozark','Narcos','Black Mirror'],
+    'featured-movie': ['The Grand Budapest Hotel','La La Land','No Country for Old Men','Whiplash'],
+    'top-10-row': ['The Shawshank Redemption','Pulp Fiction','Forrest Gump','Fight Club','Goodfellas']
+  };
+
+  // small helper to create a poster card consistent with homepage styles
+  function makeCard(title, imgSrc, tmdbId){
+    const wrapper = document.createElement('div');
+    wrapper.className = 'poster-card relative min-w-[140px] w-[160px] aspect-[2/3] rounded-lg overflow-hidden snap-start flex-shrink-0 group cursor-pointer';
+    wrapper.innerHTML = `
+      <img alt="${escapeHtml(title)}" class="w-full h-full object-cover poster-img" src="${imgSrc}" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+        <span class="text-sm text-white line-clamp-1">${escapeHtml(title)}</span>
+      </div>
+    `;
+    // deep-link behavior: when clicked, attempt to open details via parent page API if available
+    wrapper.addEventListener('click', (e)=>{
+      try {
+        // if loaded inside iframe parent has openDetails; prefer IMDb via TMDB external id lookup
+        if(window.parent && window.parent.fetch){
+          // attempt to resolve tmdb -> imdb and call parent openDetails
+          if(tmdbId && window.parent.openDetails){
+            // parent openDetails expects imdb id; try to resolve via TMDB external ids
+            fetch(`https://api.themoviedb.org/3/movie/${encodeURIComponent(tmdbId)}/external_ids?api_key=${TMDB_KEY}`).then(r=>r.json()).then(json=>{
+              const imdb = json && (json.imdb_id || json.imdbId) ? (json.imdb_id || json.imdbId) : null;
+              if(imdb && window.parent.openDetails) window.parent.openDetails(imdb, 'movie');
+            }).catch(()=>{ /* ignore */ });
+            return;
+          }
+        }
+        // fallback: open TMDB movie page in new tab
+        if(tmdbId) window.open(`https://www.themoviedb.org/movie/${encodeURIComponent(tmdbId)}`, '_blank');
+      } catch(err){}
+    });
+    return wrapper;
+  }
+
+  function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // query TMDB for a query and return results array
+  async function tmdbQuery(q){
+    try{
+      const res = await fetch(tmdbSearch(q));
+      if(!res.ok) return null;
+      const j = await res.json();
+      return (j && Array.isArray(j.results)) ? j.results : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  // fill a single container by trying each query until we have cards
+  async function fillContainer(containerId, queries, want = 6){
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    container.innerHTML = ''; // clear placeholder
+
+    // Special-case: Top 10 row -> use TMDB "popular movies" endpoint for authoritative top items
+    if(containerId === 'top-10-row'){
+      try{
+        const resp = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_KEY}&language=en-US&page=1`);
+        const json = await resp.json();
+        const results = (json && Array.isArray(json.results)) ? json.results.slice(0, 10) : [];
+        if(results.length === 0){
+          const note = document.createElement('div');
+          note.className = 'text-sm text-neutral-400 p-4';
+          note.textContent = 'No items found.';
+          container.appendChild(note);
+          return;
+        }
+        // create poster cards first
+        const cards = [];
+        for(const r of results){
+          if(!r || !r.poster_path) continue;
+          const img = posterUrl(r.poster_path);
+          const title = r.title || r.name || 'Untitled';
+          const card = makeCard(title, img, r.id);
+          cards.push(card);
+        }
+        // transform into top10 layout with plain numeric ranks 1..10 (no zero-padding)
+        container.innerHTML = '';
+        // Build top10 items from the TMDB "popular" results so we can attach the TMDB id for detail resolution.
+        results.slice(0, 10).forEach((r, idx) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'top10-item';
+          const rank = document.createElement('div');
+          rank.className = 'top10-rank text-white/10';
+          rank.textContent = String(idx + 1); // 1..10
+
+          const posterWrap = document.createElement('div');
+          posterWrap.className = 'top10-poster';
+          const img = document.createElement('img');
+          img.alt = r.title || r.name || 'Untitled';
+          img.src = posterUrl(r.poster_path || r.backdrop_path);
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = 'cover';
+          posterWrap.appendChild(img);
+
+          // store tmdb id on the wrapper so click resolver can use it
+          wrapper.dataset.tmdb = String(r.id || '');
+          wrapper.dataset.type = (r.media_type || 'movie');
+
+          // click -> resolve TMDB external ids to IMDb and open details (use parent.openDetails if available)
+          wrapper.addEventListener('click', async () => {
+            const tmdbId = wrapper.dataset.tmdb;
+            const kind = (wrapper.dataset.type === 'tv' || wrapper.dataset.type === 'series') ? 'tv' : 'movie';
+            if(!tmdbId) return;
+            try{
+              // fetch external ids and prefer imdb_id
+              const extUrl = kind === 'tv' ? `https://api.themoviedb.org/3/tv/${encodeURIComponent(tmdbId)}/external_ids?api_key=${TMDB_KEY}`
+                                           : `https://api.themoviedb.org/3/movie/${encodeURIComponent(tmdbId)}/external_ids?api_key=${TMDB_KEY}`;
+              const resp = await fetch(extUrl);
+              const j = await resp.json();
+              const imdbId = j && (j.imdb_id || j.imdbId) ? (j.imdb_id || j.imdbId) : null;
+              if(imdbId){
+                // prefer calling parent.openDetails (top-level app) which expects imdb ids
+                if(window.parent && typeof window.parent.openDetails === 'function'){
+                  window.parent.openDetails(imdbId, kind === 'tv' ? 'series' : 'movie');
+                } else if(typeof openDetails === 'function'){
+                  openDetails(imdbId, kind === 'tv' ? 'series' : 'movie');
+                } else {
+                  // fallback deep-link
+                  window.location.href = `/?imdb=${encodeURIComponent(imdbId)}&type=${kind === 'tv' ? 'series' : 'movie'}`;
+                }
+                return;
+              }
+            }catch(e){
+              console.warn('TMDB -> IMDb resolve failed', e);
+            }
+            // fallback: open details by TMDB id (deep link)
+            try{
+              window.location.href = `/?tmdb=${encodeURIComponent(tmdbId)}&type=${kind === 'tv' ? 'tv' : 'movie'}`;
+            }catch(e){}
+          });
+
+          wrapper.appendChild(rank);
+          wrapper.appendChild(posterWrap);
+          container.appendChild(wrapper);
+        });
+        return;
+      }catch(err){
+        console.warn('Failed to load TMDB popular for Top 10', err);
+        const note = document.createElement('div');
+        note.className = 'text-sm text-neutral-400 p-4';
+        note.textContent = 'No items found.';
+        container.appendChild(note);
+        return;
+      }
+    }
+
+    // Generic fallback: try query list until we populate the container
+    for(const q of queries){
+      const results = await tmdbQuery(q);
+      if(!results || results.length === 0) continue;
+      let added = 0;
+      for(const r of results){
+        if(!r || !r.poster_path) continue;
+        const img = posterUrl(r.poster_path);
+        const title = r.title || r.name || 'Untitled';
+        const card = makeCard(title, img, r.id);
+        container.appendChild(card);
+        added++;
+        if(added >= want) break;
+      }
+      if(added > 0) return;
+    }
+
+    // if still empty, show a simple notice
+    const note = document.createElement('div');
+    note.className = 'text-sm text-neutral-400 p-4';
+    note.textContent = 'No items found.';
+    container.appendChild(note);
+  }
+
+  // kick off filling all mapped rows in parallel (but throttle a bit)
+  const tasks = Object.keys(ROW_MAP).map(id => fillContainer(id, ROW_MAP[id]));
+  try { await Promise.all(tasks); } catch(e){}
+
+  // Additionally populate any row containers without explicit mapping by running a generic trending fill
+  const autoFillIds = ['marvel-movies','disney-movies','peacock-movies','classics','hbomax-movies','hbomax-series','netflix-movies','netflix-series','featured-movie'];
+  for(const id of autoFillIds){
+    if(document.getElementById(id) && document.getElementById(id).children.length === 0){
+      await fillContainer(id, ['Avengers','Toy Story','Jurassic Park','Casablanca'], 6);
+    }
+  }
+
+})();
+</script>
+
+  <script>
+    // Localize hero Play / More Info button labels (English <-> Spanish)
+    (function(){
+      const MAP = {
+        en: { 'play-btn': 'Play', 'trailer-btn': 'More Info' },
+        es: { 'play-btn': 'Reproducir', 'trailer-btn': 'Más información' }
+      };
+
+      function applyHeroButtonLanguage(lang){
+        try{
+          const map = MAP[lang] || MAP.en;
+          // update any element using data-i18n attribute (hero and detail UI)
+          document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(!key) return;
+            if(map[key]) el.textContent = map[key];
+          });
+          // also update any .btn-label spans (fallback)
+          document.querySelectorAll('.btn-label').forEach(el => {
+            const parent = el.closest('[data-i18n]');
+            if(parent) return; // already handled
+            // try to infer from nearby button type
+            const btn = el.closest('button');
+            if(!btn) return;
+            if(btn.classList.contains('play-hero') || btn.id === 'play-btn') el.textContent = map['play-btn'];
+            else if(btn.classList.contains('trailer-hero') || btn.id === 'trailer-btn') el.textContent = map['trailer-btn'];
+          });
+        }catch(e){ console.warn('applyHeroButtonLanguage failed', e); }
+      }
+
+      // apply on load using stored language
+      document.addEventListener('DOMContentLoaded', function(){
+        const lang = localStorage.getItem('app_language') || 'en';
+        applyHeroButtonLanguage(lang);
+      });
+
+      // update when language changes in other tabs/panels
+      window.addEventListener('storage', function(e){
+        if(e.key === 'app_language'){
+          applyHeroButtonLanguage(e.newValue || 'en');
+        }
+      });
+
+      // expose for same-tab callers
+      window.applyHeroButtonLanguage = applyHeroButtonLanguage;
+    })();
+  </script>

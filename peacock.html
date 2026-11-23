@@ -1,0 +1,226 @@
+<!doctype html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Peacock Movies — Vidlo</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    body { background:#0A0A0A; color:#e5e2e1; font-family: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; min-height:100dvh; margin:0 }
+    header { position:sticky; top:0; z-index:40; background:linear-gradient(180deg, rgba(10,10,10,.95), rgba(10,10,10,.9)); border-bottom:1px solid rgba(255,255,255,0.03); padding:12px 16px; display:flex; align-items:center; gap:12px; }
+    .back{ color:#60a5fa; padding:8px; border-radius:8px; display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px solid rgba(255,255,255,0.03); }
+    main{ max-width:none; width:100%; margin:12px 0; padding:0 12px; box-sizing:border-box; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      width: 100%;
+      align-items: start;
+    }
+    .grid-wrap { position: relative; height: calc(100vh - 120px); overflow: auto; padding-bottom: 24px; }
+    .poster-card { background:#0f0f10; border-radius:8px; overflow:hidden; aspect-ratio:2/3; display:block; cursor:pointer; border:1px solid rgba(255,255,255,0.04); transition: box-shadow 0.3s ease, transform 0.18s ease; }
+    .poster-card img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.4s ease; }
+    .poster-card:hover img { transform: scale(1.08); }
+    .poster-card .poster-card-title { position:absolute; bottom:8px; left:8px; right:8px; color:#fff; font-size:13px; font-weight:600; text-shadow:0 4px 12px rgba(0,0,0,0.6); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .loader { text-align:center; color:#9ca3af; padding:20px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="back" onclick="history.back()" aria-label="Back"><span class="material-symbols-outlined">arrow_back</span></button>
+    <h1 style="margin:0;font-size:18px;font-weight:700">Peacock Movies</h1>
+
+
+  </header>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const genres = ['All Genres','Action','Drama','Adventure','Thriller','Comedy','Sci-Fi','Mystery','Romance','Animation','Crime','Fantasy','Horror'];
+      const btn = document.getElementById('discover-filter-toggle');
+      const list = document.getElementById('discover-filter-list');
+      const label = document.getElementById('discover-filter-label');
+      if(!btn || !list) return;
+      genres.forEach(g => {
+        const li = document.createElement('li');
+        li.textContent = g;
+        li.tabIndex = 0;
+        li.style.padding = '8px 10px';
+        li.style.borderRadius = '8px';
+        li.style.cursor = 'pointer';
+        li.style.color = '#e5e2e1';
+        li.addEventListener('click', () => {
+          label.textContent = g;
+          list.classList.add('hidden');
+          window.location.href = '/index.html?genre=' + encodeURIComponent(g);
+        });
+        li.addEventListener('keydown', (e) => { if(e.key==='Enter') li.click(); });
+        list.appendChild(li);
+      });
+      btn.addEventListener('click', (e) => {
+        const hidden = list.classList.contains('hidden');
+        if(hidden) { list.classList.remove('hidden'); btn.setAttribute('aria-expanded','true'); } else { list.classList.add('hidden'); btn.setAttribute('aria-expanded','false'); }
+      });
+      document.addEventListener('click', (e)=> { if(!btn.contains(e.target) && !list.contains(e.target)) list.classList.add('hidden'); });
+    });
+  </script>
+
+  <main>
+    <div style="height:8px;margin:8px 0;"></div>
+    <section class="grid-wrap">
+      <div id="grid" class="grid" role="list" aria-live="polite"></div>
+      <div id="loader" class="loader">Loading...</div>
+    </section>
+  </main>
+
+<script>
+(async function(){
+  const TMDB_KEY = 'b15142dfa85e41840fcd4ab30d82488f';
+  const TMDB_IMG = p => p ? ('https://image.tmdb.org/t/p/w500'+p) : '/no-image-available.png';
+  const grid = document.getElementById('grid');
+  const loader = document.getElementById('loader');
+
+  let page = 1;
+  let loading = false;
+  let ended = false;
+  const seenIds = new Set();
+  const SAFETY_CAP = 400;
+
+  async function fetchDiscoverPage(p){
+    const url = new URL('https://api.themoviedb.org/3/discover/movie');
+    url.searchParams.set('api_key', TMDB_KEY);
+    url.searchParams.set('language', 'en-US');
+    url.searchParams.set('sort_by', 'popularity.desc');
+    url.searchParams.set('page', String(p));
+    try {
+      const r = await fetch(url);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return await r.json();
+    } catch (e) {
+      console.warn('fetchDiscoverPage error', e);
+      return null;
+    }
+  }
+
+  function createCard(item){
+    const id = String(item.id || '');
+    if(!id || seenIds.has(id)) return null;
+    const title = item.title || item.name || '';
+    const posterSrc = TMDB_IMG(item.poster_path || item.backdrop_path);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'poster-card relative group';
+    wrapper.dataset.imdb = id;
+    wrapper.tabIndex = 0;
+    wrapper.setAttribute('role','listitem');
+
+    const img = document.createElement('img');
+    img.alt = title;
+    img.src = posterSrc;
+    img.onerror = function(){ if(!this._tried){ this._tried = true; this.src = '/no-image-available.png'; } };
+    wrapper.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.className = 'poster-card-title';
+    caption.textContent = title;
+    wrapper.appendChild(caption);
+
+    wrapper.addEventListener('click', () => {
+      location.href = `/index.html?tmdb=${encodeURIComponent(id)}&type=movie`;
+    });
+    wrapper.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wrapper.click(); }
+    });
+
+    seenIds.add(id);
+    return wrapper;
+  }
+
+  async function loadBatch(pagesToFetch = 2, targetAppend = 24){
+    if(loading || ended) return 0;
+    loading = true;
+    loader.textContent = 'Loading...';
+    let added = 0;
+    for(let i=0; i<pagesToFetch && !ended; i++){
+      if(grid.children.length >= SAFETY_CAP) { ended = true; break; }
+      const res = await fetchDiscoverPage(page);
+      page++;
+      if(!res || !Array.isArray(res.results) || res.results.length === 0){
+        ended = true; break;
+      }
+      for(const it of res.results){
+        if(added >= targetAppend) break;
+        const card = createCard(it);
+        if(card){ grid.appendChild(card); added++; }
+      }
+      await new Promise(r=>setTimeout(r, 80));
+    }
+    loading = false;
+    loader.textContent = ended ? (grid.children.length ? '' : 'No results') : '';
+    return added;
+  }
+
+  async function loadMore(){
+    if(loading || ended) return;
+    let totalAdded = 0;
+    while(totalAdded < 16 && !ended){
+      const a = await loadBatch(1, 16);
+      if(!a) break;
+      totalAdded += a;
+      if(grid.children.length >= SAFETY_CAP) break;
+    }
+  }
+
+  (async function warm(){
+    try {
+      await loadBatch(3, 48);
+      if(grid.children.length < 40) await loadBatch(2, 40);
+      setTimeout(()=> { if(!loading && !ended) loadMore(); }, 300);
+    } catch(e){ console.warn(e); }
+  })();
+
+  const gridWrapEl = document.querySelector('.grid-wrap');
+  let scrollTimeout;
+  function onScroll(e){
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(()=> {
+      try {
+        if(ended || loading) return;
+        if(gridWrapEl && e && e.target === gridWrapEl){
+          const bottom = gridWrapEl.scrollTop + gridWrapEl.clientHeight;
+          if(bottom >= gridWrapEl.scrollHeight - 260) loadMore();
+        } else {
+          if((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 900)) loadMore();
+        }
+      } catch(err){}
+    }, 120);
+  }
+  if(gridWrapEl) gridWrapEl.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    if(document.body.offsetHeight < window.innerHeight * 1.2) loadMore();
+  });
+
+  window.addEventListener('load', ()=> setTimeout(()=> {
+    const first = grid.querySelector('.poster-card');
+    if(first) try{ first.focus(); }catch(e){}
+  }, 250));
+})();
+</script>
+<script>
+(function(){
+  const MAP = {
+    en: { title: 'Peacock Movies — Vidlo', heading: 'Peacock Movies' },
+    es: { title: 'Peacock — Películas', heading: 'Peacock — Películas' }
+  };
+  function applyLang(lang){
+    const m = MAP[lang] || MAP.en;
+    try{ document.title = m.title; }catch{}
+    try{ const h = document.querySelector('header h1'); if(h) h.textContent = m.heading; }catch{}
+  }
+  try{ applyLang(localStorage.getItem('app_language') || 'en'); }catch{}
+  window.addEventListener('storage', (e)=>{ if(e.key==='app_language') applyLang(e.newValue||'en'); });
+  window.applyStudioLanguage = applyLang;
+})();
+</script>
+</body>
+</html>

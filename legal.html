@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Legal - Vidlo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#414755",
+                      "surface-tint": "#adc6ff",
+                      "error-container": "#93000a",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0e0e0e",
+                      "error": "#ffb4ab",
+                      "on-surface": "#e5e2e1",
+                      "primary": "#adc6ff",
+                      "on-tertiary-fixed-variant": "#7c2e00",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary": "#c2c1ff",
+                      "surface-variant": "#353534",
+                      "surface-container": "#201f1f",
+                      "inverse-surface": "#e5e2e1",
+                      "on-secondary-container": "#b2b1ff",
+                      "primary-fixed": "#d8e2ff",
+                      "primary-container": "#4b8eff",
+                      "on-tertiary": "#571e00",
+                      "surface": "#131313",
+                      "surface-container-low": "#1c1b1b",
+                      "tertiary-fixed": "#ffdbcc",
+                      "inverse-primary": "#005bc1",
+                      "on-secondary": "#1c0b9f",
+                      "on-error": "#690005",
+                      "tertiary-fixed-dim": "#ffb595",
+                      "on-secondary-fixed": "#0c006a",
+                      "secondary-fixed": "#e2dfff",
+                      "on-background": "#e5e2e1",
+                      "tertiary-container": "#ef6719",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-primary": "#002e69",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-surface-variant": "#c1c6d7",
+                      "on-tertiary-container": "#4c1a00",
+                      "background": "#131313",
+                      "on-primary-container": "#00285c",
+                      "on-secondary-fixed-variant": "#3631b4",
+                      "surface-dim": "#131313",
+                      "tertiary": "#ffb595",
+                      "surface-container-highest": "#353534",
+                      "on-primary-fixed": "#001a41",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "surface-bright": "#3a3939",
+                      "secondary-container": "#3834b6",
+                      "outline": "#8b90a0",
+                      "inverse-on-surface": "#313030",
+                      "on-tertiary-fixed": "#351000"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "stack-xl": "64px",
+                      "container-max-width": "1440px",
+                      "stack-sm": "8px",
+                      "stack-lg": "32px",
+                      "gutter": "24px",
+                      "stack-md": "16px",
+                      "stack-xs": "4px",
+                      "margin-desktop": "48px",
+                      "margin-mobile": "16px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "caption": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "display-lg-mobile": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+          body {
+              font-family: 'Inter', sans-serif;
+          }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased">
+<!-- TopAppBar -->
+<!-- Main Content -->
+<main class="pt-24 px-margin-mobile max-w-container-max-width mx-auto md:px-margin-desktop md:pt-32 pb-24 md:pb-32">
+<button onclick="window.history.back()" aria-label="Back" title="Back" class="text-indigo-500 p-2 rounded-full fixed left-4 top-4 z-50 bg-transparent">
+  <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="mb-stack-lg text-center md:text-left">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-surface mb-stack-sm">Legal</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Last updated: June 2, 2026</p>
+</div>
+
+<div class="flex flex-col gap-stack-xl md:flex-row md:gap-gutter">
+<!-- Content Area -->
+<div class="flex-1 space-y-stack-xl">
+<!-- Terms of Service Section -->
+<section class="space-y-stack-lg scroll-mt-32" id="terms">
+<h2 class="font-headline-md text-headline-md text-primary border-b border-surface-container-highest pb-stack-sm">Terms of Service</h2>
+<div class="space-y-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">1. Acceptance of Terms</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">By accessing and using the Vidlo platform, you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services.</p>
+</div>
+<div class="space-y-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">2. User Conduct</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">You agree to use the Service only for lawful purposes. You agree not to take any action that might compromise the security of the site, render the site inaccessible to others or otherwise cause damage to the site or the Content. You agree not to add to, subtract from, or otherwise modify the Content, or to attempt to access any Content that is not intended for you.</p>
+<div class="bg-surface-container-low p-stack-md rounded-lg border border-surface-container-highest">
+<ul class="list-disc pl-5 space-y-stack-sm font-body-md text-body-md text-on-surface-variant">
+<li>No unauthorized distribution of content.</li>
+<li>Respect intellectual property rights.</li>
+<li>Maintain account security and confidentiality.</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Privacy Policy Section -->
+<section class="space-y-stack-lg scroll-mt-32" id="privacy">
+<h2 class="font-headline-md text-headline-md text-primary border-b border-surface-container-highest pb-stack-sm">Privacy Policy</h2>
+<div class="space-y-stack-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">1. Data Collection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">We collect information to provide better services to all our users. The information Vidlo collects, and how that information is used, depends on how you use our services and how you manage your privacy controls.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md mt-stack-md">
+<div class="bg-surface-container p-stack-md rounded-lg">
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-xs">Information you provide</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Personal details, payment information, and account preferences.</p>
+</div>
+<div class="bg-surface-container p-stack-md rounded-lg">
+<h4 class="font-label-md text-label-md text-on-surface mb-stack-xs">Information we collect</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Usage data, device information, and viewing history.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<!-- BottomNavBar (Mobile Only) -->
+<script>
+        // Simple scroll spy for navigation pills
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.sticky a');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('text-primary', 'bg-primary/10');
+                            link.classList.add('text-on-surface-variant', 'hover:text-on-surface', 'hover:bg-surface-container');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('text-primary', 'bg-primary/10');
+                                link.classList.remove('text-on-surface-variant', 'hover:text-on-surface', 'hover:bg-surface-container');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        });
+    </script>
+<script>
+  (function(){
+    // Minimal localized strings for the Legal page
+    const DICT = {
+      en: {
+        title: 'Legal - Vidlo',
+        pageTitle: 'Legal',
+        lastUpdated: 'Last updated: June 2, 2026',
+        termsHeading: 'Terms of Service',
+        termsPara: 'By accessing and using the Vidlo platform, you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these particular services, you shall be subject to any posted guidelines or rules applicable to such services.',
+        termsList1: 'No unauthorized distribution of content.',
+        termsList2: 'Respect intellectual property rights.',
+        termsList3: 'Maintain account security and confidentiality.',
+        privacyHeading: 'Privacy Policy',
+        privacyPara: 'We collect information to provide better services to all our users. The information Vidlo collects, and how that information is used, depends on how you use our services and how you manage your privacy controls.',
+        infoYouProvideTitle: 'Information you provide',
+        infoYouProvide: 'Personal details, payment information, and account preferences.',
+        infoWeCollectTitle: 'Information we collect',
+        infoWeCollect: 'Usage data, device information, and viewing history.'
+      },
+      es: {
+        title: 'Legal - Vidlo',
+        pageTitle: 'Legal',
+        lastUpdated: 'Última actualización: 2 de junio de 2026',
+        termsHeading: 'Términos de Servicio',
+        termsPara: 'Al acceder y usar la plataforma Vidlo, acepta y se compromete a cumplir los términos y disposiciones de este acuerdo. Además, al usar estos servicios en particular, estará sujeto a las directrices o reglas publicadas aplicables a dichos servicios.',
+        termsList1: 'No distribucción no autorizada de contenido.',
+        termsList2: 'Respete los derechos de propiedad intelectual.',
+        termsList3: 'Mantenga la seguridad y confidencialidad de la cuenta.',
+        privacyHeading: 'Política de Privacidad',
+        privacyPara: 'Recopilamos información para brindar mejores servicios a todos nuestros usuarios. La información que Vidlo recopila y cómo se usa depende de cómo use nuestros servicios y cómo administre sus controles de privacidad.',
+        infoYouProvideTitle: 'Información que proporciona',
+        infoYouProvide: 'Detalles personales, información de pago y preferencias de la cuenta.',
+        infoWeCollectTitle: 'Información que recopilamos',
+        infoWeCollect: 'Datos de uso, información del dispositivo e historial de visualización.'
+      }
+    };
+
+    // mapping of selectors to DICT keys
+    const MAP = [
+      { sel: 'head > title', key: 'title', attr: 'text' },
+      { sel: 'main .mb-stack-lg h1', key: 'pageTitle', attr: 'text' },
+      { sel: 'main .mb-stack-lg p', key: 'lastUpdated', attr: 'text' },
+
+      // Terms section
+      { sel: '#terms h2', key: 'termsHeading', attr: 'text' },
+      { sel: '#terms .space-y-stack-md p', key: 'termsPara', attr: 'text' },
+      // the list items under Terms
+      { sel: '#terms .bg-surface-container ul li:nth-child(1)', key: 'termsList1', attr: 'text' },
+      { sel: '#terms .bg-surface-container ul li:nth-child(2)', key: 'termsList2', attr: 'text' },
+      { sel: '#terms .bg-surface-container ul li:nth-child(3)', key: 'termsList3', attr: 'text' },
+
+      // Privacy section
+      { sel: '#privacy h2', key: 'privacyHeading', attr: 'text' },
+      { sel: '#privacy .space-y-stack-md p', key: 'privacyPara', attr: 'text' },
+      { sel: '#privacy .grid > div:first-child h4', key: 'infoYouProvideTitle', attr: 'text' },
+      { sel: '#privacy .grid > div:first-child p', key: 'infoYouProvide', attr: 'text' },
+      { sel: '#privacy .grid > div:last-child h4', key: 'infoWeCollectTitle', attr: 'text' },
+      { sel: '#privacy .grid > div:last-child p', key: 'infoWeCollect', attr: 'text' }
+    ];
+
+    function apply(lang){
+      const L = DICT[lang] ? DICT[lang] : DICT.en;
+
+      MAP.forEach(m => {
+        try {
+          // special-case head > title
+          if(m.sel === 'head > title'){
+            document.title = L[m.key] || document.title;
+            return;
+          }
+          const el = document.querySelector(m.sel);
+          if(!el) return;
+          if(m.attr === 'text'){
+            el.textContent = L[m.key] || '';
+          } else if(m.attr === 'html'){
+            el.innerHTML = L[m.key] || '';
+          }
+        } catch(e){
+          // ignore missing nodes
+        }
+      });
+    }
+
+    // Expose for same-tab use
+    window.applyLegalLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){}
+    };
+
+    // Initialize from storage
+    document.addEventListener('DOMContentLoaded', function(){
+      const lang = localStorage.getItem('app_language') || 'en';
+      apply(lang);
+    });
+
+    // Listen for storage events to update across tabs
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+</body></html>

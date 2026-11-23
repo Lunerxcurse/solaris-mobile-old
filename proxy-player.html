@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Player Proxy</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000;color:#fff}
+    .frame{width:100%;height:100%;border:0;display:flex;align-items:center;justify-content:center}
+    .inner{width:100%;height:100%;border:0}
+    /* keep minimal chrome for safety */
+
+  </style>
+</head>
+<body>
+
+  <div class="frame" id="container">
+    <!-- inner iframe will be injected by script -->
+  </div>
+
+  <script>
+    // Read the 'src' query param and safely create an inner iframe to host the external player.
+    (function(){
+      function qsParam(name){
+        const params = new URLSearchParams(location.search);
+        return params.get(name);
+      }
+      const src = qsParam('src') || '';
+      const container = document.getElementById('container');
+
+      // Security: only allow http(s) targets
+      if(!src || !(src.startsWith('http://') || src.startsWith('https://'))){
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:#ccc">Invalid player URL</div>';
+        return;
+      }
+
+      // Create nested iframe that points to the real player host (dulo/2embed/other)
+      const inner = document.createElement('iframe');
+      inner.className = 'inner';
+      inner.src = decodeURIComponent(src);
+      inner.frameBorder = '0';
+      inner.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+      inner.allowFullscreen = true;
+      container.appendChild(inner);
+
+
+
+      // When running inside top-level app iframe, the parent overlay close button will typically control closing.
+      // This proxy keeps itself minimal and simply hosts the external player inside a nested iframe.
+    })();
+  </script>
+</body>
+</html>

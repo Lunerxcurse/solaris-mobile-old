@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Status - System Status</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#474746",
+                        "primary-fixed-dim": "#0056b3",
+                        "surface-bright": "#383939",
+                        "surface-variant": "#343535",
+                        "surface-container-low": "#1b1c1c",
+                        "on-background": "#e3e2e2",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-tertiary-container": "#565555",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#474646",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#b7b5b4",
+                        "surface-container": "#1f2020",
+                        "surface-container-highest": "#343535",
+                        "primary-container": "#0056b3",
+                        "on-secondary": "#313030",
+                        "secondary": "#c8c6c5",
+                        "on-primary-fixed-variant": "#002a5c",
+                        "on-surface-variant": "#d1c5ac",
+                        "tertiary": "#e9e6e5",
+                        "surface-dim": "#121414",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "on-surface": "#e3e2e2",
+                        "tertiary-container": "#cdcaca",
+                        "primary": "#007bff",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#e6f2ff",
+                        "outline": "#9a9078",
+                        "on-tertiary": "#313030",
+                        "surface-container-lowest": "#0d0e0f",
+                        "inverse-on-surface": "#303031",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "inverse-surface": "#e3e2e2",
+                        "surface-container-high": "#292a2a",
+                        "background": "#121414",
+                        "on-secondary-fixed-variant": "#474746",
+                        "inverse-primary": "#003d82",
+                        "primary-fixed": "#3395ff",
+                        "surface": "#121414",
+                        "on-primary-fixed": "#e6f2ff",
+                        "outline-variant": "#4e4633",
+                        "secondary-fixed": "#e5e2e1",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "surface-tint": "#007bff",
+                        "error": "#ffb4ab",
+                        "on-primary-container": "#e6f2ff",
+                        "status-success": "#007bff",
+                        "status-warning": "#F59E0B",
+                        "status-error": "#EF4444"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "stack-lg": "32px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-md": ["JetBrains Mono", "monospace"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "label-sm": ["JetBrains Mono", "monospace"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+</script>
+<style>
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(0.95); }
+        }
+        .glow-effect:hover {
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.1);
+            border-color: rgba(0, 123, 255, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<header class="bg-background dark:bg-background border-b border-surface-variant dark:border-surface-variant sticky top-0 z-50">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary pulse-animation" data-icon="monitor_heart" data-weight="fill" style="font-variation-settings: 'FILL' 1;">monitor_heart</span>
+<h1 id="status-title" class="font-headline-md text-headline-md font-bold tracking-tighter text-primary dark:text-primary">Status</h1>
+</div>
+<button onclick="window.location.href='/'" class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 duration-150 px-3 py-1.5 rounded-lg flex items-center gap-2">
+<span class="font-label-md text-label-md hidden sm:inline">Back to Home</span>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</header>
+<main class="flex-grow px-margin-mobile md:px-margin-desktop py-stack-lg max-w-container-max mx-auto w-full flex flex-col gap-stack-lg">
+<section class="bg-surface-container-low border border-surface-variant rounded-xl p-6 md:p-8 flex flex-col items-center justify-center text-center gap-4 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-status-success/5 to-transparent pointer-events-none"></div>
+<div class="w-16 h-16 rounded-full bg-status-success/10 flex items-center justify-center mb-2 pulse-animation">
+<span class="material-symbols-outlined text-status-success text-4xl" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">All Systems Operational</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Last updated: Just now</p>
+</section>
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Service Status</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-[#1A1A1A] border border-[#2C2C2C] rounded-lg p-5 flex flex-col gap-3 glow-effect transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="api">api</span>
+<span class="font-headline-md text-[18px] font-semibold text-on-surface">TMDB API</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-status-success shadow-[0_0_8px_rgba(0,123,255,0.4)]"></span>
+<span class="font-label-sm text-label-sm text-status-success uppercase">Operational</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2 pt-3 border-t border-[#2C2C2C]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Latency</span>
+<span class="font-label-md text-label-md text-on-surface">130ms</span>
+</div>
+</div>
+<div class="bg-[#1A1A1A] border border-[#2C2C2C] rounded-lg p-5 flex flex-col gap-3 glow-effect transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="web">web</span>
+<span class="font-headline-md text-[18px] font-semibold text-on-surface">Frontend</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-status-success shadow-[0_0_8px_rgba(0,123,255,0.4)]"></span>
+<span class="font-label-sm text-label-sm text-status-success uppercase">Operational</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2 pt-3 border-t border-[#2C2C2C]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Uptime (30d)</span>
+<span class="font-label-md text-label-md text-on-surface">99.99%</span>
+</div>
+</div>
+<div class="bg-[#1A1A1A] border border-[#2C2C2C] rounded-lg p-5 flex flex-col gap-3 glow-effect transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="image">image</span>
+<span class="font-headline-md text-[18px] font-semibold text-on-surface">Image Server</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-status-success shadow-[0_0_8px_rgba(0,123,255,0.4)]"></span>
+<span class="font-label-sm text-label-sm text-status-success uppercase">Operational</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2 pt-3 border-t border-[#2C2C2C]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Cache Hit Rate</span>
+<span class="font-label-md text-label-md text-on-surface">94.2%</span>
+</div>
+</div>
+<div class="bg-[#1A1A1A] border border-[#2C2C2C] rounded-lg p-5 flex flex-col gap-3 glow-effect transition-all duration-300">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="database">database</span>
+<span class="font-headline-md text-[18px] font-semibold text-on-surface">Database</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-status-success shadow-[0_0_8px_rgba(0,123,255,0.4)]"></span>
+<span class="font-label-sm text-label-sm text-status-success uppercase">Operational</span>
+</div>
+</div>
+<div class="flex justify-between items-end mt-2 pt-3 border-t border-[#2C2C2C]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Replication Lag</span>
+<span class="font-label-md text-label-md text-on-surface">0s</span>
+</div>
+</div>
+</div>
+</section>
+<section class="flex flex-col gap-stack-md mt-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">System History</h3>
+<div class="bg-[#1A1A1A] border border-[#2C2C2C] rounded-xl p-6">
+<div class="mb-6">
+<h4 class="font-headline-md text-[18px] font-semibold text-on-surface mb-2">Past 7 Days</h4>
+<div class="flex gap-1 h-12 w-full">
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-full rounded-sm"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-high border border-surface-variant text-label-sm font-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 text-on-surface">100% - May 10</div>
+</div>
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-full rounded-sm"></div>
+</div>
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-full rounded-sm"></div>
+</div>
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-[98%] rounded-sm"></div>
+</div>
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-full rounded-sm"></div>
+</div>
+<div class="flex-1 bg-status-warning/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-warning h-[85%] rounded-sm"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-high border border-status-warning/30 text-label-sm font-label-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10 text-status-warning">85% - Partial Outage</div>
+</div>
+<div class="flex-1 bg-status-success/20 rounded-sm flex flex-col justify-end group relative cursor-pointer">
+<div class="w-full bg-status-success h-full rounded-sm"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col">
+<div class="py-4 border-t border-[#2C2C2C] hover:bg-[#242424] transition-colors -mx-6 px-6">
+<div class="flex justify-between items-start mb-2">
+<h5 class="font-label-md text-label-md text-status-warning font-semibold">Degraded Performance - Image Server</h5>
+<span class="font-label-sm text-label-sm text-on-surface-variant">May 15, 2024</span>
+</div>
+<p class="font-body-md text-[14px] text-on-surface-variant leading-relaxed">
+                            We experienced a brief period of degraded performance with our image delivery CDN causing slow poster loads. The issue was identified as a routing configuration error and resolved within 45 minutes.
+                        </p>
+</div>
+<div class="py-4 border-t border-[#2C2C2C] hover:bg-[#242424] transition-colors -mx-6 px-6">
+<div class="flex justify-between items-start mb-2">
+<h5 class="font-label-md text-label-md text-on-surface font-semibold">Scheduled Maintenance</h5>
+<span class="font-label-sm text-label-sm text-on-surface-variant">May 02, 2024</span>
+</div>
+<p class="font-body-md text-[14px] text-on-surface-variant leading-relaxed">
+                            Completed planned database migration. No downtime was observed. All systems operating normally.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-surface-dim dark:bg-surface-dim border-t border-surface-variant dark:border-surface-variant full-width bottom-0 mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full gap-4">
+</div>
+</footer>
+
+<script>
+  (function(){
+    const DICT = {
+      en: {
+        title: 'Status - System Status',
+        hero_h2: 'All Systems Operational',
+        hero_p: 'Last updated: Just now',
+        tmdb: 'TMDB API',
+        frontend: 'Frontend',
+        imageserver: 'Image Server',
+        database: 'Database',
+        history: 'System History',
+        past7: 'Past 7 Days',
+        degraded_title: 'Degraded Performance - Image Server',
+        maintenance_title: 'Scheduled Maintenance'
+      },
+      es: {
+        title: 'Estado del Sistema - Vidlo',
+        hero_h2: 'Todos los sistemas operativos',
+        hero_p: 'Última actualización: justo ahora',
+        tmdb: 'API de TMDB',
+        frontend: 'Frontend',
+        imageserver: 'Servidor de imágenes',
+        database: 'Base de datos',
+        history: 'Historial del sistema',
+        past7: 'Últimos 7 días',
+        degraded_title: 'Rendimiento degradado - Servidor de imágenes',
+        maintenance_title: 'Mantenimiento programado'
+      }
+    };
+
+    // Replace exact-match visible text nodes to avoid fragile selectors.
+    function replaceExactText(from, to){
+      if(!from) return;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, null);
+      const nodes = [];
+      while(walker.nextNode()){
+        const n = walker.currentNode;
+        if(n.nodeType === Node.TEXT_NODE){
+          const txt = n.textContent.trim();
+          if(txt === from){
+            nodes.push(n);
+          }
+        } else if(n.nodeType === 1){
+          // element whose entire textContent equals the key (helps with headings)
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from){
+            nodes.push(n);
+          }
+        }
+      }
+      nodes.forEach(n => {
+        if(n.nodeType === 3) n.textContent = n.textContent.replace(from, to);
+        else n.textContent = to;
+      });
+    }
+
+    function apply(lang){
+      const map = DICT[lang] || DICT.en;
+      try{ document.title = map.title; }catch(e){}
+      // targeted replacements for known visible strings
+      replaceExactText('All Systems Operational', map.hero_h2);
+      replaceExactText('Last updated: Just now', map.hero_p);
+      replaceExactText('TMDB API', map.tmdb);
+      replaceExactText('Frontend', map.frontend);
+      replaceExactText('Image Server', map.imageserver);
+      replaceExactText('Database', map.database);
+      replaceExactText('System History', map.history);
+      replaceExactText('Past 7 Days', map.past7);
+      replaceExactText('Degraded Performance - Image Server', map.degraded_title);
+      replaceExactText('Scheduled Maintenance', map.maintenance_title);
+    }
+
+    window.applyStatusLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){}
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      apply(stored);
+    });
+
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+<script>
+  // Lightweight localization bootstrap for the Status page.
+  // Reads localStorage 'app_language', updates a set of known visible strings,
+  // listens for storage events to update across tabs, and exposes applyStatusLanguage().
+  (function(){
+    const DICT = {
+      en: {
+        title: 'Status - System Status',
+        hero_h2: 'All Systems Operational',
+        hero_p: 'Last updated: Just now',
+        tmdb: 'TMDB API',
+        frontend: 'Frontend',
+        imageserver: 'Image Server',
+        database: 'Database',
+        history: 'System History',
+        past7: 'Past 7 Days',
+        degraded_title: 'Degraded Performance - Image Server',
+        maintenance_title: 'Scheduled Maintenance'
+      },
+      es: {
+        title: 'Estado del Sistema - Vidlo',
+        hero_h2: 'Todos los sistemas operativos',
+        hero_p: 'Última actualización: justo ahora',
+        tmdb: 'API de TMDB',
+        frontend: 'Frontend',
+        imageserver: 'Servidor de imágenes',
+        database: 'Base de datos',
+        history: 'Historial del sistema',
+        past7: 'Últimos 7 días',
+        degraded_title: 'Rendimiento degradado - Servidor de imágenes',
+        maintenance_title: 'Mantenimiento programado'
+      }
+    };
+
+    // Replace exact visible strings; preserves layout and icons
+    function replaceExactText(from, to){
+      if(!from) return;
+      // search both text nodes and elements whose full textContent equals the key
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null);
+      const nodes = [];
+      while(walker.nextNode()){
+        const n = walker.currentNode;
+        if(n.nodeType === Node.TEXT_NODE){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        } else if(n.nodeType === 1){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        }
+      }
+      nodes.forEach(n => {
+        if(n.nodeType === Node.TEXT_NODE) n.textContent = n.textContent.replace(from, to);
+        else n.textContent = to;
+      });
+    }
+
+    function apply(lang){
+      const map = DICT[lang] || DICT.en;
+      try{ document.title = map.title; }catch(e){}
+      replaceExactText('All Systems Operational', map.hero_h2);
+      replaceExactText('Last updated: Just now', map.hero_p);
+      replaceExactText('TMDB API', map.tmdb);
+      replaceExactText('Frontend', map.frontend);
+      replaceExactText('Image Server', map.imageserver);
+      replaceExactText('Database', map.database);
+      replaceExactText('System History', map.history);
+      replaceExactText('Past 7 Days', map.past7);
+      replaceExactText('Degraded Performance - Image Server', map.degraded_title);
+      replaceExactText('Scheduled Maintenance', map.maintenance_title);
+    }
+
+    // Expose for same-tab toggles; persist choice to localStorage
+    window.applyStatusLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){
+        console.warn('applyStatusLanguage failed', e);
+      }
+    };
+
+    // Initialize from stored language on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      apply(stored);
+    });
+
+    // Update if language changed in another tab
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+<script>
+  // Lightweight title localization for the status header.
+  (function(){
+    function setStatusTitle(lang){
+      try{
+        const el = document.getElementById('status-title');
+        if(!el) return;
+        el.textContent = (lang === 'es') ? 'Estado' : 'Status';
+      }catch(e){}
+    }
+
+    // Expose for same-tab toggles and persist choice
+    window.applyStatusLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        setStatusTitle(lang);
+      }catch(e){}
+    };
+
+    // Initialize from stored language on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function(){
+      const lang = localStorage.getItem('app_language') || 'en';
+      setStatusTitle(lang);
+    });
+
+    // Update title if language changed in another tab
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        setStatusTitle(newLang);
+      }
+    });
+  })();
+</script>
+<script>
+  (function(){
+    // localized strings for specific metric labels and incident texts
+    const DICT = {
+      en: {
+        latency_label: 'Latency',
+        uptime_label: 'Uptime (30d)',
+        cache_hit_label: 'Cache Hit Rate',
+        replication_label: 'Replication Lag',
+        incident_paragraph: 'We experienced a brief period of degraded performance with our image delivery CDN causing slow poster loads. The issue was identified as a routing configuration error and resolved within 45 minutes.',
+        completed_migration_paragraph: 'Completed planned database migration. No downtime was observed. All systems operating normally.'
+      },
+      es: {
+        latency_label: 'Latencia',
+        uptime_label: 'Tiempo activo (30d)',
+        cache_hit_label: 'Tasa de aciertos de caché',
+        replication_label: 'Retraso de replicación',
+        incident_paragraph: 'Tuvimos un breve periodo de rendimiento degradado en nuestra CDN de entrega de imágenes que provocó cargas lentas de pósters. El problema fue identificado como un error de configuración de enrutamiento y se resolvió en 45 minutos.',
+        completed_migration_paragraph: 'Completamos la migración programada de la base de datos. No se observó tiempo de inactividad. Todos los sistemas operan con normalidad.'
+      }
+    };
+
+    // helper: replace exact visible strings or element text matching the original
+    function replaceExactText(from, to){
+      if(!from) return;
+      // find text nodes and elements whose full trimmed text equals 'from'
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, null);
+      const nodes = [];
+      while(walker.nextNode()){
+        const n = walker.currentNode;
+        if(n.nodeType === Node.TEXT_NODE){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        } else if(n.nodeType === 1){
+          const txt = n.textContent && n.textContent.trim();
+          if(txt === from) nodes.push(n);
+        }
+      }
+      nodes.forEach(n => {
+        if(n.nodeType === Node.TEXT_NODE) n.textContent = n.textContent.replace(from, to);
+        else n.textContent = to;
+      });
+    }
+
+    function apply(lang){
+      const map = DICT[lang] || DICT.en;
+      try{
+        replaceExactText('Latency', map.latency_label);
+        replaceExactText('Uptime (30d)', map.uptime_label);
+        replaceExactText('Cache Hit Rate', map.cache_hit_label);
+        replaceExactText('Replication Lag', map.replication_label);
+        replaceExactText('We experienced a brief period of degraded performance with our image delivery CDN causing slow poster loads. The issue was identified as a routing configuration error and resolved within 45 minutes.', map.incident_paragraph);
+        // replace the completed database migration sentence
+        replaceExactText('Completed planned database migration. No downtime was observed. All systems operating normally.', map.completed_migration_paragraph);
+      }catch(e){
+        console.warn('applyStatusMetricsLanguage error', e);
+      }
+    }
+
+    // Expose and persist; keep in sync across tabs
+    window.applyStatusMetricsLanguage = function(lang){
+      try{
+        if(!lang) lang = localStorage.getItem('app_language') || 'en';
+        localStorage.setItem('app_language', lang);
+        apply(lang);
+      }catch(e){}
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+      const stored = localStorage.getItem('app_language') || 'en';
+      apply(stored);
+    });
+
+    window.addEventListener('storage', function(e){
+      if(e.key === 'app_language'){
+        const newLang = e.newValue || 'en';
+        apply(newLang);
+      }
+    });
+  })();
+</script>
+</body></html>
